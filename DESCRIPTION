@@ -1,0 +1,27 @@
+Package: chromium
+Title: Analyze and visualize high throughput chromatin interaction data, such as Hi-C or ChIA-PET
+Version: 0.0.0.9000
+Authors@R: c(person("Annika", "Gable", email = "annikagable@gmail.com", role = c("aut", "cre")),
+    person("Aleksandra", "Pekowska", email= "ola.b.pekowska@gmail.com", role = c("aut")),
+    person("Bernd", "Klaus", email= "bernd.klaus@embl.de", role = "aut"),
+    person("Wolfgang", "Huber", email= "wolfgang.huber@embl.de", role = "aut"),
+    person("Florian", "Hahne", email= "florian.hahne@novartis.com", role = "aut"))
+Description: Bin, normalize, and visualize genomic interaction data, and identify significant interactions. We are
+    using sparse matrices or the InteractionSet classes to represent and manipulate interaction data.
+Depends:
+    R (>= 3.3.0)
+License: MIT + file LICENSE
+LazyData: true
+RoxygenNote: 5.0.1
+Imports: Matrix,
+    smoothmest,
+    ggplot2,
+    rtracklayer,
+    Gviz,
+    GenomicRanges,
+    InteractionSet,
+    plyr
+Suggests: knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
