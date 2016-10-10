@@ -13,6 +13,7 @@
 #' the loss function is given for every iteration of the normalization. If plotLoss = T, the metadata will also contain a
 #' plotted version of the loss function, which can be displayed with metadata(normIset)$lossPlot.
 #' @examples
+#' norm_Iset <- normalize(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
 #'
 #' @export normalize
 
@@ -62,6 +63,7 @@ normalize <- function(Iset, numberOfIterations = 40L, plotLoss = FALSE){
 #' normalizedLFM <- normalize_LFM_iteratively(M, 10)
 #'
 #' @export normalize_LFM_iteratively
+#' @import ggplot2
 
 
 normalize_LFM_iteratively <- function(LFM, numberOfIterations, plotLoss = FALSE){
@@ -97,8 +99,8 @@ normalize_LFM_iteratively <- function(LFM, numberOfIterations, plotLoss = FALSE)
   if (plotLoss){
     iterations <- c(1L:length(lossFunction))
     df <- data.frame(iterations, lossFunction)
-    lossPlot <- ggplot2::ggplot(df, aes(iterations, lossFunction)) +
-               ggplot2::geom_bar(stat = "identity") + xlab("Iterations") + ylab("Loss function")
+    lossPlot <- ggplot(df, aes(iterations, lossFunction)) +
+               geom_bar(stat = "identity") + xlab("Iterations") + ylab("Loss function")
   }
 
   return( list( finalLFM = finalLFM, lossFunction = lossFunction, lossPlot = lossPlot, rowBias = rowBias, colBias = colBias))

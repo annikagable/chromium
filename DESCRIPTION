@@ -10,7 +10,7 @@ Description: Bin, normalize, and visualize genomic interaction data, and identif
     using sparse matrices or the InteractionSet classes to represent and manipulate interaction data.
 Depends:
     R (>= 3.3.0)
-License: MIT + file LICENSE
+License: GPL-3
 LazyData: true
 RoxygenNote: 5.0.1
 Imports: Matrix,
@@ -20,7 +20,12 @@ Imports: Matrix,
     Gviz,
     GenomicRanges,
     InteractionSet,
-    plyr
+    plyr,
+    EBImage,
+    IRanges,
+    S4Vectors,
+    SummarizedExperiment,
+    biomaRt
 Suggests: knitr,
     rmarkdown,
     testthat

@@ -3,14 +3,17 @@
 #'
 #' The data can be binned or not binned, normalized or not normalized.
 #'
-#' @param LFM A sparse ligation frequency matrix
-#' @param RFanno The restriction fragment annotation.
+#' @param LFM A sparse ligation frequency matrix, with the genomic annotation as row and column names.
 #' @param binned Boolean, whether the matrix is already binned. Defaults to TRUE.
 #' @return An interaction set object containing the information from the LFM and the genomic annotation,
 #' and with the binSize stored as metadata
 #' @examples
-#' Iset=LFM_to_Iset(LFM, RFanno, binned=F)
+#' Iset <- LFM_to_Iset(LFM, binned=F)
 #'
+#' @import InteractionSet
+#' @import SummarizedExperiment
+#' @import GenomicRanges
+#' @import S4Vectors
 #' @import InteractionSet
 #' @export LFM_to_Iset
 
@@ -105,11 +108,15 @@ Iset_to_LFM <- function(Iset) {
 #' @param RFpairs A dataframe with two columns containing restriction fragment pairs. The restriction fragment with the
 #' lower ID is always in the left column, and all restriction fragments are sorted in ascending order first by the left
 #' column and then by the right colunn.
+#' @param binned Boolean, whether the matrix is already binned. Defaults to FALSE.
 #' @return An InteractionSet object.
 #' @examples
 #' Iset <- RFpairs_to_Iset(RFanno, RFpairs)
 #'
 #' @import InteractionSet
+#' @import GenomicRanges
+#' @import plyr
+#'
 #'
 RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
 
@@ -192,6 +199,10 @@ triangle_to_sym <- function(trimat) {
 #' @examples
 #' matrix <- Iset_region_to_matrix(Iset, chr = 11, from = 30000000, to = 30100000)
 #'
+#' @import InteractionSet
+#' @import GenomicRanges
+#' @import Matrix
+#' @import IRanges
 
 Iset_region_to_LFM <- function(Iset, chr, from = NULL, to = NULL) {
 

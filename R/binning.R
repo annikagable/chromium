@@ -13,33 +13,33 @@ bin <- function(Iset, binSize){
   RFanno <- list[[2]]
   RFpairs <- list[[3]]
   LFM <- Create_any_resolution_LFM(RFpairs, RFanno, binSize)
-  ifelse(is.null(binSize), binned = F, binned = T)
-  outIset <- LFM_to_Iset(LFM, binned)
-  metadata(outIset)$binSize <- binSize
+  ifelse(is.null(binSize), binned <-  F, binned <-  T)
+  outIset <- LFM_to_Iset(LFM, binned = binned)
+  SummarizedExperiment::metadata(outIset)$binSize <- binSize
   return(outIset)
 }
 
-#' Create a ligation frequency matrix or interactionSet binned at any resolution.
+#' Create a ligation frequency matrix or InteractionSet binned at any resolution.
 #'
 #' Use this function to create a sparse ligation frequency matrix with genome annotation or an InteractionSet.
 #' Binning is optional. By default, the restriction fragment (RF) resolution will be chosen.
 #'
-#' @param RFpairs A dataframe with two columns containing restriction fragment pairs. The restriction fragment with the lower ID is always
-#' in the left column, and all restriction fragments are sorted in ascending order first by the left column and then by the right colunn.
-#' @param RFanno A dataframe giving the genomic annotation of the restriction fragments. Columns are: chromosome, start of restriction
-#' fragment, end of restriction fragment, restriction fragment ID. The table is sorted by chromosomal position and restriction fragments
-#' are numbered along their genomic position.
-#' @param binSize The size of a bin. Optional parameter; if no value is given, the function will default to not binning (binSize=NULL)
-#' and instead giving the ligation frequency matrix at restriction fragment resolution (calculation can be slow).
-#' @param returnIset Optional boolean. With default TRUE, the function will return an InteractionSet object, otherwise a sparse
-#' ligation frequency matrix.
-#' @return The ligation frequency matrix \code{LFM}, a sparse matrix annotated by genomic position, or an InteractionSet.
+#' @param RFpairs A dataframe with two columns containing restriction fragment pairs. The restriction
+#' fragment with the lower ID is always in the left column, and all restriction fragments are sorted
+#' in ascending order first by the left column and then by the right colunn.
+#' @param RFanno A dataframe giving the genomic annotation of the restriction fragments. Columns are:
+#' chromosome, start of restriction fragment, end of restriction fragment, restriction fragment ID.
+#' The table is sorted by chromosomal position and restriction fragments are numbered along their
+#' genomic position.
+#' @param binSize The size of a bin. Optional parameter; if no value is given, the function will default
+#' to not binning (binSize=NULL) and instead giving the ligation frequency matrix at restriction fragment
+#' resolution (calculation can be slow).
+#' @return The ligation frequency matrix \code{LFM}, a sparse matrix annotated by genomic position,
+#' or an InteractionSet.
 #' @examples
 #' Create a ligation frequency matrix (LFM) or interactionSet (Iset) with different settings:
 #'
-#' myLFM <- Create_any_resolution_LFM(myRFpairs, myRFanno, binSize = 100000, returnIset = F)
-#' Iset <- Create_any_resolution_LFM(myRFpairs, myRFanno) # create interactionSet at restriction fragment resolution
-#' Iset <- Create_any_resolution_LFM(RFpairs, RFanno, binSize = 6, returnIset = T)
+#' myLFM <- Create_any_resolution_LFM(myRFpairs, myRFanno, binSize = 100000)
 #'
 #' A toy example:
 #'
@@ -54,7 +54,9 @@ bin <- function(Iset, binSize){
 #' toyRFanno <- data.frame(chr, start, end, RF_id)
 #'
 #' #create a toy matrix with different settings
-#' toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, 3, returnIset = F)
+#' toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, 3)
+#'
+#' @import Matrix
 #'
 
 
@@ -143,11 +145,11 @@ Create_any_resolution_LFM <- function(RFpairs, RFanno, binSize = NULL){
 #'
 #' Using the restriction fragment pairs or bin pairs and their genomic annotation, a unique pair ID is generated.
 #'
-#' @param pairs A dataframe with two columns containing restriction fragment pairs or bin pairs. The mate with the lower ID is always
-#' in the left column, and all pairs are sorted in ascending order first by the left column and then by the right colunn.
+#' @param pairs A dataframe with two columns containing restriction fragment pairs or bin pairs. The mate with the lower ID is
+#' always in the left column, and all pairs are sorted in ascending order first by the left column and then by the right colunn.
 #' @param RFanno A dataframe giving the genomic annotation of the restriction fragments or bins. Columns are: chromosome, start of
-#' restriction fragment or bin, end of restriction fragment or bin, restriction fragment or bin ID. The table is sorted by chromosomal
-#' position and restriction fragments or bins are numbered along their genomic position.
+#' restriction fragment or bin, end of restriction fragment or bin, restriction fragment or bin ID. The table is sorted by
+#' chromosomal position and restriction fragments or bins are numbered along their genomic position.
 #' @return A vector containing the pair IDs.
 #' @examples
 #' # restriction fragment pairs are given here
@@ -161,7 +163,8 @@ Create_any_resolution_LFM <- function(RFpairs, RFanno, binSize = NULL){
 #' myanno <- data.frame(chr, start, end, RF_id)
 #'
 #' # generate the encoded pairs
-#' code <- RFpair_to_pairID(mypairs, myanno) # 16  47  78 109 140 171 202 233 264 295 326 357 388 419 450
+#' code <- RFpair_to_pairID(mypairs, myanno)
+#' # 16  47  78 109 140 171 202 233 264 295 326 357 388 419 450
 #'
 RFpair_to_pairID <- function(pairs, RFanno){
   a <- pairs[,1] - 1

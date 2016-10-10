@@ -16,26 +16,26 @@
 #' and if it exist, the lossFunction values of each iteration of the normalization.
 #' @examples example
 
-quality_assessment = function(RFpairs, RFanno, Iset=NULL){
+quality_assessment <- function(RFpairs, RFanno, Iset = NULL){
 
   # get number of ligation products
-  interactionCount = nrow(RFpairs)
+  interactionCount <- nrow(RFpairs)
 
   # Get the number of interchromosomal and the number of intrachromosomal contacts to know if the experiment is ok
-  interIntra = table(RFanno$chr[RFpairs[,1]]==RFanno$chr[RFpairs[,2]])
-  inter = as.data.frame(interIntra)[1,2]
-  intra = as.data.frame(interIntra)[2,2]
+  interIntra <- table(RFanno$chr[RFpairs[ ,1]] == RFanno$chr[RFpairs[ ,2]])
+  inter <- as.data.frame(interIntra)[1,2]
+  intra <- as.data.frame(interIntra)[2,2]
 
   # Get the distances between contacts to compare how many short or long range contacts there are.
-  contactDistances = RFanno$start[RFpairs[,2]] - RFanno$start[RFpairs[,1]]
+  contactDistances <- RFanno$start[RFpairs[,2]] - RFanno$start[RFpairs[,1]]
 
-  qa = list(interactionCount=interactionCount,
-            interchromosomal=inter,
-            intrachromosomal=intra,
-            contactDistances=contactDistances)
+  qa <- list(interactionCount = interactionCount,
+            interchromosomal = inter,
+            intrachromosomal = intra,
+            contactDistances = contactDistances)
 
   if (!is.null(Iset)){
-    qa$lossFunction=metadata(Iset)$lossFunction
+    qa$lossFunction <- SummarizedExperiment::metadata(Iset)$lossFunction
   }
   return(qa)
 }
@@ -54,35 +54,35 @@ quality_assessment = function(RFpairs, RFanno, Iset=NULL){
 #'
 #' @examples
 #' plot_qa(qa, "./Outputs", "My_qality_report.pdf")
+#' @import ggplot2
 
-
-plot_qa = function(qa, outDir=getwd(), reportName="Quality_report.pdf"){
+plot_qa <- function(qa, outDir = getwd(), reportName = "Quality_report.pdf"){
 
   # create an output directory if it doesn't exist
   if(!dir.exists(file.path(outDir))){dir.create(file.path(outDir))}
 
   # "plot" the quality assessment file
-  pdf(file.path(outDir, reportName))
-  plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
+  grDevices::pdf(file.path(outDir, reportName))
+  graphics::plot(0:10, type = "n", xaxt = "n", yaxt = "n", bty="n", xlab = "", ylab = "")
 
-  text(5, 9, "Quality assessment report")
-  text(4, 7, "Interactioncount = ")
-  text(10, 7, qa$interactionCount)
-  text(4, 6, "Number of interchromosomal interactions = ")
-  text(10, 6, qa$interchromosomal)
-  text(4, 5, "Number of intrachromosomal interactions = ")
-  text(10, 5, qa$intrachromosomal)
+  graphics::text(5, 9, "Quality assessment report")
+  graphics::text(4, 7, "Interactioncount = ")
+  graphics::text(10, 7, qa$interactionCount)
+  graphics::text(4, 6, "Number of interchromosomal interactions = ")
+  graphics::text(10, 6, qa$interchromosomal)
+  graphics::text(4, 5, "Number of intrachromosomal interactions = ")
+  graphics::text(10, 5, qa$intrachromosomal)
 
-  distancePlot = qplot(qa$contactDistances, geom="histogram", xlab="Distance [bp]", main="Plot of contact distances")
+  distancePlot <- qplot(qa$contactDistances, geom = "histogram", xlab = "Distance [bp]", main = "Plot of contact distances")
   print(distancePlot)
 
   if("lossFunction" %in% names(qa)){
 
-    iterations = c(1L:length(qa$lossFunction))
-    df=data.frame(iterations, qa$lossFunction)
-    lossPlot = ggplot(df, aes(iterations, qa$lossFunction)) + geom_bar(stat = "identity") +
+    iterations <- c(1L:length(qa$lossFunction))
+    df <- data.frame(iterations, qa$lossFunction)
+    lossPlot <- ggplot(df, aes(iterations, qa$lossFunction)) + geom_bar(stat = "identity") +
                 xlab("Iterations") + ylab("Loss function") + ggtitle("Loss function of the normalization")
     print(lossPlot)
   }
-  dev.off()
+  grDevices::dev.off()
 }

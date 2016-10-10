@@ -21,15 +21,16 @@
 #' @param colmapChipseqs A named character vector corresponding to chipseqs with a color name for each chipseq. Defaults to a
 #' vector of twelve colors. For a larger number of chipseq tracks, please define colmapChipseqs.
 #' @param customAnno A custom annotation, given as a list of BED dataframes. Optional.
+#' @param smooth Which smoothing type should be applied? Options are: "none", "box", and "gaussian".
 #' @param smoothing Smoothing parameter. The percentage of signal to be taken from the surrounding pixels. Smoothing is optional.
 #' @param filterSize Smoothing parameter. The dimension of filter mask, e.g. filterSize = 3 means 3x3 filter. Smoothing is optional.
+#' @param sigma In the case of Gaussian smoothing, how large should the sigma of the distribution be?
 #' @return Output will be in PDF format.
 #' @examples
-#' visualize(Iset, chr = "11", from = 30000000, to = 30100000, gen = "mm9", customAnno = cpgIslands, smoothing = 80, filterSize = 3)
+#' visualize(Iset, chr = "11", from = 30000000, to = 30100000,
+#'           gen = "mm9", customAnno = cpgIslands, smoothing = 80, filterSize = 3)
 #'
 #' @export visualize
-#' @import InteractionSet
-#' @import Gviz
 #'
 
 visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels = NULL, printTranscripts = TRUE, outDir = getwd(),
@@ -117,7 +118,7 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
       # set the minimum and maximum values of the chipseq scale
       if(is.null(chipScale)){
         # default scale is from -0.5 to the 99% quantile value of the non-zero scores
-        ylim <- c(-0.5, round( quantile( score(chipseqs[[csl]][score(chipseqs[[csl]]) != 0,]),
+        ylim <- c(-0.5, round( stats::quantile( score(chipseqs[[csl]][score(chipseqs[[csl]]) != 0,]),
                                          probs = seq(0,1,0.01))[100], digits = -1))
       }else{
         # user-specified scale
@@ -148,8 +149,8 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
         } else {
             strand <- NULL
             }
-        theRegion <- GRanges(seqnames = Rle(chr.reg),
-                             ranges = IRanges(start = as.numeric(theRegion[,2]), end = as.numeric(theRegion[,3])),
+        theRegion <- GenomicRanges::GRanges(seqnames = S4Vectors::Rle(chr.reg),
+                             ranges = IRanges::IRanges(start = as.numeric(theRegion[,2]), end = as.numeric(theRegion[,3])),
                              score = score,
                              strand = strand
         )
@@ -185,12 +186,16 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
 #' @param img The symmetric, non-sparse interaction matrix (for feasibility, choose only a limited chromosomal region).
 #' @param scaleCol The color scale threshold. All values above the threshold will ne shown in the highest intensity color.
 #' @param smoothing Smoothing parameter. The percentage of signal to be taken from the surrounding pixels. Smoothing is optional.
+#' @param smooth Which smoothing type should be applied? Options are: "none", "box", and "gaussian".
 #' @param filterSize Smoothing parameter. The number of pixels surrounding the central pixel. (Size of filter mask.) Smoothing is optional.
+#' @param sigma In the case of Gaussian smoothing, how large should the sigma of the distribution be?
 #' @param binSize Size of bins into which the interaction matrix is binned.
 #' @examples
 #' myTriangle <- rotatedImageIC(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
 #'
-#' @import Gviz
+# ' @import Gviz
+# ' @import EBImage
+# ' @import grid
 #'
 
 rotated_image <- function(img, scaleCol, smooth, smoothing, filterSize, sigma, binSize){
@@ -213,7 +218,7 @@ rotated_image <- function(img, scaleCol, smooth, smoothing, filterSize, sigma, b
     surround <- filterSize^2 - 1
 
     filter <- matrix(rep(smoothing / (surround * 100), filterSize^2), nrow = filterSize)
-    middle <- median(filterSize)
+    middle <- stats::median(filterSize)
     filter[middle, middle] <- (100 - smoothing) / 100
     img <- EBImage::filter2(img, filter)
 

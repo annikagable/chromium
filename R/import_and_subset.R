@@ -7,6 +7,7 @@
 #' @param raflist A list of file names containing the interactions. The files are in raf format, meaning they contain two
 #' columns (no header) with the interacting restriction fragment IDs. If raflist=NULL, all raf files in the directory will
 #' be read.
+#' @param binned Boolean, whether the matrix is already binned. Defaults to FALSE.
 #' @return An InteractionSet object containing all interactions from all input raf files, and the bin size (if any) in the metadata.
 #' @examples
 #' myInteractions <- import(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))
@@ -56,7 +57,7 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
   }
   message("Reading interactions from your .raf file(s).")
   pairslist <- lapply(raflist, function(file){
-    df <- read.delim(file.path(workDir, file), header = FALSE, sep = "\t")
+    df <- utils::read.delim(file.path(workDir, file), header = FALSE, sep = "\t")
     stopifnot(ncol(df) == 2)
     return(df)
   })
@@ -82,18 +83,20 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 #' @param chr The chromosome for which interactions and regions should be retained.
 #' @param from Optional. The starting point of the interactions and regions to be retained. If NULL, the chromosome
 #' beginning is selected.
-#' @return to Optional. The ending point of the interactions and regions to be retained. If NULL, the chromosome end
+#' @param to Optional. The ending point of the interactions and regions to be retained. If NULL, the chromosome end
 #' is selected.
+#' @return An InteractionSet containing only those regions and those interactions specified in the arguments.
 #' @examples
 #' chr2_Iset <- subset(Iset, chr=2)
 #'
-#'@export subset
+#' @export subset
+#' @import SummarizedExperiment
 #'
 subset <- function(Iset, chr, from = NULL, to = NULL){
-  if(is.null(metadata(Iset)$binSize)) binned = FALSE else binned = TRUE
+  if(is.null(SummarizedExperiment::metadata(Iset)$binSize)) binned = FALSE else binned = TRUE
   subLFM <- Iset_region_to_LFM(Iset, chr, from, to)
   subIset <- LFM_to_Iset(subLFM, binned)
-  metadata(subIset)$binSize <- metadata(Iset)$binSize
+  SummarizedExperiment::metadata(subIset)$binSize <- SummarizedExperiment::metadata(Iset)$binSize
   return(subIset)
 }
 
@@ -112,10 +115,14 @@ subset <- function(Iset, chr, from = NULL, to = NULL){
 #' @examples
 #' chr2_Iset <- subset_interactions(Iset, chr=2)
 #'
+#' @import InteractionSet
+#' @import GenomicRanges
+#'
+#'
 subset_interactions <- function(Iset, chr, from = NULL, to = NULL){
 
   # maximal entry on the selected chromsome
-  max <- max(end(regions(Iset)[seqnames(regions(Iset)) == chr]))
+  max <- max(end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
 
   if(is.null(from)) from <- 0
   if(is.null(to)) to <- max
@@ -125,9 +132,9 @@ subset_interactions <- function(Iset, chr, from = NULL, to = NULL){
   if(from > to) stop ('"from" has to be smaller than "to"')
 
   # subsetting
-  indlist <- lapply(anchors(Iset), function(i){
-    start <- as(start(ranges(i)), "vector")
-    chrom <- as(seqnames(i), "vector")
+  indlist <- lapply(InteractionSet::anchors(Iset), function(i){
+    start <- as(start(GenomicRanges::ranges(i)), "vector")
+    chrom <- as(GenomicRanges::seqnames(i), "vector")
     start >= from & start <= to & chrom == chr
   })
   indices <- which(indlist$first & indlist$second)
