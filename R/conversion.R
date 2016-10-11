@@ -10,11 +10,6 @@
 #' @examples
 #' Iset <- LFM_to_Iset(LFM, binned=F)
 #'
-#' @import InteractionSet
-#' @import SummarizedExperiment
-#' @import GenomicRanges
-#' @import S4Vectors
-#' @import InteractionSet
 #' @export LFM_to_Iset
 
 LFM_to_Iset <- function(LFM, binned = F) {
@@ -65,7 +60,6 @@ LFM_to_Iset <- function(LFM, binned = F) {
 #' @examples
 #' LFM=Iset_to_LFM(Iset)[[1]]
 #'
-#'@import InteractionSet
 #'@export Iset_to_LFM
 
 Iset_to_LFM <- function(Iset) {
@@ -113,11 +107,7 @@ Iset_to_LFM <- function(Iset) {
 #' @examples
 #' Iset <- RFpairs_to_Iset(RFanno, RFpairs)
 #'
-#' @import InteractionSet
-#' @import GenomicRanges
-#' @import plyr
-#'
-#'
+
 RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
 
     ranges <- GenomicRanges::GRanges(RFanno$chr, IRanges::IRanges(RFanno$start, RFanno$end), IDs = RFanno$RF_id)
@@ -141,9 +131,9 @@ RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
     Iset <- InteractionSet::InteractionSet(freq, outGI)
 
     if (binned) {
-        metadata(Iset)$binSize <- (RFanno$end)[1] - (RFanno$start)[1] + 1
+        S4Vectors::metadata(Iset)$binSize <- (RFanno$end)[1] - (RFanno$start)[1] + 1
     } else {
-        metadata(Iset)$binSize <- NULL
+      S4Vectors::metadata(Iset)$binSize <- NULL
     }
 
     return(Iset)
@@ -156,7 +146,6 @@ RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
 #' @examples
 #' triangleMatrix <- sym_to_triangle(symmMatrix)
 #'
-#' @import Matrix
 #' @export sym_to_triangle
 #'
 sym_to_triangle <- function(mat) {
@@ -175,7 +164,6 @@ sym_to_triangle <- function(mat) {
 #' @examples
 #' symmMatrix <- triangle_to_sym(triangleMatrix)
 #'
-#' @import Matrix
 #' @export triangle_to_sym
 #'
 triangle_to_sym <- function(trimat) {
@@ -187,7 +175,7 @@ triangle_to_sym <- function(trimat) {
     return(mat)
 }
 
-#' Convert an InteractionSet region to a ligation frequency matrix.
+#' Convert an InteractionSet region into a ligation frequency matrix.
 #'
 #' Pick a genomic region from an InteractionSet object and convert it into a sparse triangular matrix.
 #'
@@ -199,15 +187,11 @@ triangle_to_sym <- function(trimat) {
 #' @examples
 #' matrix <- Iset_region_to_matrix(Iset, chr = 11, from = 30000000, to = 30100000)
 #'
-#' @import InteractionSet
-#' @import GenomicRanges
-#' @import Matrix
-#' @import IRanges
 
 Iset_region_to_LFM <- function(Iset, chr, from = NULL, to = NULL) {
 
     # maximal entry on the selected chromsome
-    max <- max(end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
+    max <- max(SummarizedExperiment::end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
 
     if (is.null(from))
         from <- 1

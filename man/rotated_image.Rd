@@ -26,8 +26,7 @@ A matrix with the interactions is rotated and cut along the diagonal to form a t
 is performed utilizing the filter2 convolution filter from the EBImage package.
 }
 \examples{
-myTriangle <- rotatedImageIC(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
-
+myTriangle <- rotated_image(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
 
 }
 

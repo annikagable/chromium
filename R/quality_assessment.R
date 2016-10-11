@@ -14,7 +14,7 @@
 #' @param Iset An InteractionSet object with lossFunction from normalization in its metadata.
 #' @return A list with the quality assessment values interactionCount, interchromosomal, intrachromosomal, contactDistances,
 #' and if it exist, the lossFunction values of each iteration of the normalization.
-#' @examples example
+#' @examples
 
 quality_assessment <- function(RFpairs, RFanno, Iset = NULL){
 
@@ -53,7 +53,8 @@ quality_assessment <- function(RFpairs, RFanno, Iset = NULL){
 #' @param reportName File name of the output PDF file
 #'
 #' @examples
-#' plot_qa(qa, "./Outputs", "My_qality_report.pdf")
+#' plot_qa(qa, reportName = "My_qality_report.pdf")
+#'
 #' @import ggplot2
 
 plot_qa <- function(qa, outDir = getwd(), reportName = "Quality_report.pdf"){

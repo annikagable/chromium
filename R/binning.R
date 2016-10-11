@@ -6,16 +6,16 @@
 #' @param binSize The desired bin size.
 #' @return The binned InteractionSet, with the bin size stored in metadata(myInteractionSet)$binSize
 #'
-#' @export bin
+#' @export bin_chrom
 
-bin <- function(Iset, binSize){
+bin_chrom <- function(Iset, binSize){
   list <- Iset_to_LFM(Iset)
   RFanno <- list[[2]]
   RFpairs <- list[[3]]
   LFM <- Create_any_resolution_LFM(RFpairs, RFanno, binSize)
   ifelse(is.null(binSize), binned <-  F, binned <-  T)
   outIset <- LFM_to_Iset(LFM, binned = binned)
-  SummarizedExperiment::metadata(outIset)$binSize <- binSize
+  S4Vectors::metadata(outIset)$binSize <- binSize
   return(outIset)
 }
 
@@ -37,26 +37,24 @@ bin <- function(Iset, binSize){
 #' @return The ligation frequency matrix \code{LFM}, a sparse matrix annotated by genomic position,
 #' or an InteractionSet.
 #' @examples
-#' Create a ligation frequency matrix (LFM) or interactionSet (Iset) with different settings:
+#' # Create a ligation frequency matrix (LFM) or interactionSet (Iset) with different settings:
 #'
 #' myLFM <- Create_any_resolution_LFM(myRFpairs, myRFanno, binSize = 100000)
 #'
-#' A toy example:
+#' # A toy example:
 #'
-#' #restriction fragment pairs are given here (RFpairs)
+#' # Restriction fragment pairs are given here (RFpairs)
 #' toyRFpairs <- data.frame(RF1 = c(1:15), RF2 = c(5,7,11,12,11,14,10,15,16,15,19,20,14,17,19))
 #'
-#' #genomic annotation of the restriction fragment pairs (RFanno)
+#' # Genomic annotation of the restriction fragment pairs (RFanno)
 #' chr <- c(rep.int(1,10), rep.int(2,10), rep.int(3,10))
 #' start <- rep.int(seq(1,30,by = 3), 3)
 #' end <- start + 2
 #' RF_id <- c(1:30)
 #' toyRFanno <- data.frame(chr, start, end, RF_id)
 #'
-#' #create a toy matrix with different settings
+#' # Create a toy matrix with different settings
 #' toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, 3)
-#'
-#' @import Matrix
 #'
 
 

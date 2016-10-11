@@ -12,9 +12,11 @@ subset_interactions(Iset, chr, from = NULL, to = NULL)
 \item{chr}{The chromosome for which interactions should be retained.}
 
 \item{from}{Optional. The starting point of the interactions to be retained. If NULL, the chromosome beginning is selected.}
+
+\item{to}{Optional. The ending point of the interactions to be retained. If NULL, the chromosome end is selected.}
 }
 \value{
-to Optional. The ending point of the interactions to be retained. If NULL, the chromosome end is selected.
+An InteractionSet object containing only those interactions specified, but all original genomic annotation.
 }
 \description{
 The interactions of the InteractionSet will be subsetted, but all regions (i.e. the annotation) will be retained.

@@ -28,7 +28,4 @@ and distances between interactions.
 \details{
 here go the details
 }
-\examples{
-example
-}
 

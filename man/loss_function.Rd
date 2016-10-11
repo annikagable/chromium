@@ -19,7 +19,7 @@ Loss function of the iterative proportional fitting algorithm
 }
 \examples{
 M <- matrix(c(3,0,1,0,7,9,1,9,7),3,3)
-M <- Matrix(M, sparse = TRUE)
-lf=loss_function(rowSums(M), colSums(M))
+M <- Matrix::Matrix(M, sparse = TRUE)
+lf <- loss_function(Matrix::rowSums(M), Matrix::colSums(M))
 }
 

@@ -18,6 +18,7 @@ Outputs a PDF with number of ligation products (treated as interactions), number
 and plots of distances between interactions and the loss function of normalization (if data are normalized).
 }
 \examples{
-plot_qa(qa, "./Outputs", "My_qality_report.pdf")
+plot_qa(qa, reportName = "My_qality_report.pdf")
+
 }
 

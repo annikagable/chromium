@@ -2,7 +2,7 @@
 % Please edit documentation in R/conversion.R
 \name{Iset_region_to_LFM}
 \alias{Iset_region_to_LFM}
-\title{Convert an InteractionSet region to a ligation frequency matrix.}
+\title{Convert an InteractionSet region into a ligation frequency matrix.}
 \usage{
 Iset_region_to_LFM(Iset, chr, from = NULL, to = NULL)
 }

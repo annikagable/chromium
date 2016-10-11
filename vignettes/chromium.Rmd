@@ -54,7 +54,7 @@ library(chromium)
 
 ```{r, eval=F}
 #chr2 <- import(bed='RFanno_HindIII.bed', raflist = list('chr2.raf'), workDir = "~/chromium/inst/extdata")
-chr2 <- chromium::import(bed = 'RFanno_HindIII.bed', raflist = list('chr2.raf'), workDir = file.path(system.file("inst/extdata", package = "chromium"))))
+chr2 <- import_chrom(bed = 'RFanno_HindIII.bed', raflist = list('chr2.raf'), workDir = file.path(system.file("inst/extdata", package = "chromium"))))
 
 ```
 
@@ -82,7 +82,7 @@ metadata(chr2)
 If you choose to use only certain chromosomes or regions for your analysis, we provide a possibility to easily subset your data. The ´from´ and ´to´ parameters signify the genomic positions of the start and end of your subset, and they are optional. Subsetting will work in the same way for binned data, without the need to change the `to` and ´from´ values.
 
 ```{r, eval=FALSE}
-chr2_subset <- chromium::subset(chr2, chr=2, from=1, to=1000)
+chr2_subset <- subset_chrom(chr2, chr=2, from=1, to=1000)
 ```
 
 The resulting ´InteractionSet´ object contains only those interactions within the genomic region, and only the genomic annotation for the selected region. This reduces the object size in comparison to the standard method of subsetting included in the  ´InteractionSet´ package.
@@ -97,7 +97,7 @@ Let's bin our chromosome 2 contact matrix into 10kb bins:
 
 ```{r, eval=FALSE}
 
-chr2_binned = chromium::bin(chr2, binSize = 10000)
+chr2_binned = bin_chrom(chr2, binSize = 10000)
 
 ```
 
@@ -119,7 +119,7 @@ The number of interactions between two genomic regions in the contact matrix ref
 To allow the user to assess the normalization quality and choose the number of iterations to perform, we compute a loss function which reflects the distance between the corrected and fully converged matrix at each iteration.
 
 ```{r, eval=FALSE}
-chr2_bin_norm = chromium::normalize(chr2_binned, numberOfIterations = 20)
+chr2_bin_norm = normalize_chrom(chr2_binned, numberOfIterations = 20)
 ```
 
 # Visualization

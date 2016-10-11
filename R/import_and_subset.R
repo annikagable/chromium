@@ -10,11 +10,11 @@
 #' @param binned Boolean, whether the matrix is already binned. Defaults to FALSE.
 #' @return An InteractionSet object containing all interactions from all input raf files, and the bin size (if any) in the metadata.
 #' @examples
-#' myInteractions <- import(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))
+#' myInteractions <- import_chrom(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))
 #'
-#' @export import
+#' @export import_chrom
 #'
-import <- function(bed, raflist = NULL, workDir = getwd(), binned = FALSE){
+import_chrom <- function(bed, raflist = NULL, workDir = getwd(), binned = FALSE){
 
   list <- read_bed_raf(bed, raflist, workDir)
   RFanno <- list[[1]]
@@ -78,6 +78,7 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 #' Choose a chromosome and a region within which InteractionSet interactions and regions should be retained.
 #'
 #' Only those interactions and regions of an InteractionSet which lie within the specified range will be retained.
+#' This is useful to reduce the object size of the InteractionSet.
 #'
 #' @param Iset The InteractionSet object to be subsetted.
 #' @param chr The chromosome for which interactions and regions should be retained.
@@ -87,16 +88,15 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 #' is selected.
 #' @return An InteractionSet containing only those regions and those interactions specified in the arguments.
 #' @examples
-#' chr2_Iset <- subset(Iset, chr=2)
+#' chr2_Iset <- subset_chrom(Iset, chr = 2)
 #'
-#' @export subset
-#' @import SummarizedExperiment
+#' @export subset_chrom
 #'
-subset <- function(Iset, chr, from = NULL, to = NULL){
-  if(is.null(SummarizedExperiment::metadata(Iset)$binSize)) binned = FALSE else binned = TRUE
+subset_chrom <- function(Iset, chr, from = NULL, to = NULL){
+  if(is.null(S4Vectors::metadata(Iset)$binSize)) binned = FALSE else binned = TRUE
   subLFM <- Iset_region_to_LFM(Iset, chr, from, to)
   subIset <- LFM_to_Iset(subLFM, binned)
-  SummarizedExperiment::metadata(subIset)$binSize <- SummarizedExperiment::metadata(Iset)$binSize
+  S4Vectors::metadata(subIset)$binSize <- S4Vectors::metadata(Iset)$binSize
   return(subIset)
 }
 
@@ -111,14 +111,12 @@ subset <- function(Iset, chr, from = NULL, to = NULL){
 #' @param Iset The InteractionSet object to be subsetted.
 #' @param chr The chromosome for which interactions should be retained.
 #' @param from Optional. The starting point of the interactions to be retained. If NULL, the chromosome beginning is selected.
-#' @return to Optional. The ending point of the interactions to be retained. If NULL, the chromosome end is selected.
+#' @param to Optional. The ending point of the interactions to be retained. If NULL, the chromosome end is selected.
+#' @return An InteractionSet object containing only those interactions specified, but all original genomic annotation.
 #' @examples
 #' chr2_Iset <- subset_interactions(Iset, chr=2)
 #'
-#' @import InteractionSet
-#' @import GenomicRanges
-#'
-#'
+
 subset_interactions <- function(Iset, chr, from = NULL, to = NULL){
 
   # maximal entry on the selected chromsome

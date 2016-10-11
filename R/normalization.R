@@ -13,11 +13,11 @@
 #' the loss function is given for every iteration of the normalization. If plotLoss = T, the metadata will also contain a
 #' plotted version of the loss function, which can be displayed with metadata(normIset)$lossPlot.
 #' @examples
-#' norm_Iset <- normalize(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
+#' norm_Iset <- normalize_chrom(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
 #'
-#' @export normalize
+#' @export normalize_chrom
 
-normalize <- function(Iset, numberOfIterations = 40L, plotLoss = FALSE){
+normalize_chrom <- function(Iset, numberOfIterations = 40L, plotLoss = FALSE){
 
   # input checking
   if (class(Iset)!= "InteractionSet") stop("Input parameter 'Iset' needs to be an InteractionSet object.")
@@ -163,8 +163,8 @@ IPF_alg <- function(symLFM, numberOfIterations){
 #' @return A decimal number giving the loss function of the current row and column sums.
 #' @examples
 #' M <- matrix(c(3,0,1,0,7,9,1,9,7),3,3)
-#' M <- Matrix(M, sparse = TRUE)
-#' lf=loss_function(rowSums(M), colSums(M))
+#' M <- Matrix::Matrix(M, sparse = TRUE)
+#' lf <- loss_function(Matrix::rowSums(M), Matrix::colSums(M))
 
 loss_function <- function(rowsums, colsums){
   rowsums <- rowsums[rowsums > 0]

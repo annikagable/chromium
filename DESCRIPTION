@@ -25,7 +25,10 @@ Imports: Matrix,
     IRanges,
     S4Vectors,
     SummarizedExperiment,
-    biomaRt
+    biomaRt,
+    methods,
+    stats,
+    utils
 Suggests: knitr,
     rmarkdown,
     testthat

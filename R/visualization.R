@@ -27,13 +27,13 @@
 #' @param sigma In the case of Gaussian smoothing, how large should the sigma of the distribution be?
 #' @return Output will be in PDF format.
 #' @examples
-#' visualize(Iset, chr = "11", from = 30000000, to = 30100000,
+#' visualize_chrom(Iset, chr = "11", from = 30000000, to = 30100000,
 #'           gen = "mm9", customAnno = cpgIslands, smoothing = 80, filterSize = 3)
 #'
-#' @export visualize
+#' @export visualize_chrom
 #'
 
-visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels = NULL, printTranscripts = TRUE, outDir = getwd(),
+visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels = NULL, printTranscripts = TRUE, outDir = getwd(),
                                   name = "triangle_visualization.pdf", scaleCol = 0.02, chipseqs = NULL, chipScale = NULL,
                                   colmapChipseqs = NULL, customAnno = NULL, smooth = "none", smoothing = NULL, filterSize = NULL,
                                   sigma = NULL){
@@ -41,7 +41,7 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
   stopifnot(xor(is.null(gen), is.null(geneModels)))
   binSize <- S4Vectors::metadata(Iset)$binSize
 
-  max <- max(end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
+  max <- max(SummarizedExperiment::end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
 
   if (is.null(from))
     from <- 1
@@ -50,7 +50,7 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
 
   mat <- Iset_region_to_LFM(Iset, chr, from, to)
   mat <- triangle_to_sym(mat)
-  img <- as(mat, "matrix")
+  img <- methods::as(mat, "matrix")
 
 
   ### Build the tracks ###
@@ -118,7 +118,7 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
       # set the minimum and maximum values of the chipseq scale
       if(is.null(chipScale)){
         # default scale is from -0.5 to the 99% quantile value of the non-zero scores
-        ylim <- c(-0.5, round( stats::quantile( score(chipseqs[[csl]][score(chipseqs[[csl]]) != 0,]),
+        ylim <- c(-0.5, round( stats::quantile( rtracklayer::score(chipseqs[[csl]][rtracklayer::score(chipseqs[[csl]]) != 0,]),
                                          probs = seq(0,1,0.01))[100], digits = -1))
       }else{
         # user-specified scale
@@ -191,12 +191,9 @@ visualize <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels 
 #' @param sigma In the case of Gaussian smoothing, how large should the sigma of the distribution be?
 #' @param binSize Size of bins into which the interaction matrix is binned.
 #' @examples
-#' myTriangle <- rotatedImageIC(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
+#' myTriangle <- rotated_image(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
 #'
-# ' @import Gviz
-# ' @import EBImage
-# ' @import grid
-#'
+
 
 rotated_image <- function(img, scaleCol, smooth, smoothing, filterSize, sigma, binSize){
   if(!smooth %in% c("none", "box", "gaussian")) stop("Invalid smooth setting. Please set to 'none', 'box', or 'gaussian'.")
