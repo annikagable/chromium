@@ -29,11 +29,6 @@ Use this function to create a sparse ligation frequency matrix with genome annot
 Binning is optional. By default, the restriction fragment (RF) resolution will be chosen.
 }
 \examples{
-# Create a ligation frequency matrix (LFM) or interactionSet (Iset) with different settings:
-
-myLFM <- Create_any_resolution_LFM(myRFpairs, myRFanno, binSize = 100000)
-
-# A toy example:
 
 # Restriction fragment pairs are given here (RFpairs)
 toyRFpairs <- data.frame(RF1 = c(1:15), RF2 = c(5,7,11,12,11,14,10,15,16,15,19,20,14,17,19))
@@ -45,8 +40,10 @@ end <- start + 2
 RF_id <- c(1:30)
 toyRFanno <- data.frame(chr, start, end, RF_id)
 
-# Create a toy matrix with different settings
-toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, 3)
+# Create a toy ligation frequency matrix
+toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, binSize = 3)
+
+# In a more realistic example the bin size would range between kilobases and megabases
 
 }
 

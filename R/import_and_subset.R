@@ -42,7 +42,7 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 
   # create restriction fragment annotation
   message(paste0("Reading restriction fragment annotation from ", bed))
-  RFanno <- read.delim(file.path(workDir, bed), header = FALSE, sep = "\t")
+  RFanno <- utils::read.delim(file.path(workDir, bed), header = FALSE, sep = "\t")
   if(ncol(RFanno) != 4) stop("Your annotation file needs to have four columns: chr, start, end, and ID.")
 
   message("Sorting annotation by restriction fragment IDs (4th column).")
@@ -120,7 +120,7 @@ subset_chrom <- function(Iset, chr, from = NULL, to = NULL){
 subset_interactions <- function(Iset, chr, from = NULL, to = NULL){
 
   # maximal entry on the selected chromsome
-  max <- max(end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
+  max <- max(SummarizedExperiment::end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
 
   if(is.null(from)) from <- 0
   if(is.null(to)) to <- max
@@ -131,8 +131,8 @@ subset_interactions <- function(Iset, chr, from = NULL, to = NULL){
 
   # subsetting
   indlist <- lapply(InteractionSet::anchors(Iset), function(i){
-    start <- as(start(GenomicRanges::ranges(i)), "vector")
-    chrom <- as(GenomicRanges::seqnames(i), "vector")
+    start <- methods::as(start(GenomicRanges::ranges(i)), "vector")
+    chrom <- methods::as(GenomicRanges::seqnames(i), "vector")
     start >= from & start <= to & chrom == chr
   })
   indices <- which(indlist$first & indlist$second)
