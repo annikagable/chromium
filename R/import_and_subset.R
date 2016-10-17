@@ -10,7 +10,13 @@
 #' @param binned Boolean, whether the matrix is already binned. Defaults to FALSE.
 #' @return An InteractionSet object containing all interactions from all input raf files, and the bin size (if any) in the metadata.
 #' @examples
-#' myInteractions <- import_chrom(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))
+#' # You can import several specific raf files from the same directory
+#' # (the working directory if no workDir is specified).
+#' # myInteractions <- import_chrom(bed = "annotation.bed",
+#' #                                raflist = list("1.raf", "2.raf"))
+#'
+#' # Or just choose all raf files within a specific directory
+#' myInteractions <- import_chrom(bed = "RFanno_HindIII.bed", workDir = system.file("extdata", package = "chromium"), binned = F)
 #'
 #' @export import_chrom
 #'
@@ -35,8 +41,8 @@ import_chrom <- function(bed, raflist = NULL, workDir = getwd(), binned = FALSE)
 #' @return A list consisting of an RFanno dataframe containing the restriction fragment annotation, and an RFpairs dataframe
 #' containing the interacting restriction fragment pairs.
 #' @examples
-#' RFanno <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[1]]
-#' RFpairs <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[2]]
+#' # RFanno <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[1]]
+#' # RFpairs <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[2]]
 #'
 read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 
@@ -88,7 +94,7 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 #' is selected.
 #' @return An InteractionSet containing only those regions and those interactions specified in the arguments.
 #' @examples
-#' chr2_Iset <- subset_chrom(Iset, chr = 2)
+#' # chr2_Iset <- subset_chrom(Iset, chr = 2)
 #'
 #' @export subset_chrom
 #'
@@ -114,7 +120,7 @@ subset_chrom <- function(Iset, chr, from = NULL, to = NULL){
 #' @param to Optional. The ending point of the interactions to be retained. If NULL, the chromosome end is selected.
 #' @return An InteractionSet object containing only those interactions specified, but all original genomic annotation.
 #' @examples
-#' chr2_Iset <- subset_interactions(Iset, chr=2)
+#' # chr2_Iset <- subset_interactions(Iset, chr=2)
 #'
 
 subset_interactions <- function(Iset, chr, from = NULL, to = NULL){

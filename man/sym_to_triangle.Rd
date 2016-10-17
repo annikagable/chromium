@@ -16,6 +16,7 @@ A triangular sparse matrix, containing only the upper triangle.
 Convert a sparse symmetric matrix to a sparse triangle matrix.
 }
 \examples{
+symmMatrix <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
 triangleMatrix <- sym_to_triangle(symmMatrix)
 
 }

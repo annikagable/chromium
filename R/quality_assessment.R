@@ -14,7 +14,6 @@
 #' @param Iset An InteractionSet object with lossFunction from normalization in its metadata.
 #' @return A list with the quality assessment values interactionCount, interchromosomal, intrachromosomal, contactDistances,
 #' and if it exist, the lossFunction values of each iteration of the normalization.
-#' @examples
 
 quality_assessment <- function(RFpairs, RFanno, Iset = NULL){
 
@@ -35,7 +34,7 @@ quality_assessment <- function(RFpairs, RFanno, Iset = NULL){
             contactDistances = contactDistances)
 
   if (!is.null(Iset)){
-    qa$lossFunction <- SummarizedExperiment::metadata(Iset)$lossFunction
+    qa$lossFunction <- S4Vectors::metadata(Iset)$lossFunction
   }
   return(qa)
 }
@@ -53,6 +52,11 @@ quality_assessment <- function(RFpairs, RFanno, Iset = NULL){
 #' @param reportName File name of the output PDF file
 #'
 #' @examples
+#' qa <- list(interactionCount = 100,
+#' interchromosomal = 3,
+#' intrachromosomal = 97,
+#' contactDistances = sample(1:225, 100))
+#'
 #' plot_qa(qa, reportName = "My_qality_report.pdf")
 #'
 #' @import ggplot2

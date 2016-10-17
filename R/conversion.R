@@ -8,7 +8,8 @@
 #' @return An interaction set object containing the information from the LFM and the genomic annotation,
 #' and with the binSize stored as metadata
 #' @examples
-#' Iset <- LFM_to_Iset(LFM, binned=F)
+#' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
+#' Iset <- LFM_to_Iset(LFM, binned = F)
 #'
 #' @export LFM_to_Iset
 
@@ -16,6 +17,8 @@ LFM_to_Iset <- function(LFM, binned = F) {
 
     LFM <- sym_to_triangle(LFM)
     if (sum(LFM) == 0)  warning("You are converting an empty matrix.")
+    if (is.null(rownames(LFM))) stop("No row names present. Row and column names of the
+                                     need to be provided in chr_start_end format, e.g. 4_201000_202000.")
 
     # summarize normalized (or non-normalized) sparse matrix
     summLFM <- Matrix::summary(LFM)
@@ -58,7 +61,10 @@ LFM_to_Iset <- function(LFM, binned = F) {
 #' @return A list consisting of: the sparse ligation frequency matrix with the genomic annotation as rownames and colnames,
 #' the restriction fragment annotation (or bin annotation), and the restriction fragment pairs (or bin pairs).
 #' @examples
-#' LFM=Iset_to_LFM(Iset)[[1]]
+#' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
+#' Iset <- LFM_to_Iset(LFM, binned = F)
+#' LFM_back <- Iset_to_LFM(Iset)[[1]]
+#' LFM == LFM_back
 #'
 #'@export Iset_to_LFM
 
@@ -105,7 +111,7 @@ Iset_to_LFM <- function(Iset) {
 #' @param binned Boolean, whether the matrix is already binned. Defaults to FALSE.
 #' @return An InteractionSet object.
 #' @examples
-#' Iset <- RFpairs_to_Iset(RFanno, RFpairs)
+#' # Iset <- RFpairs_to_Iset(RFanno, RFpairs)
 #'
 
 RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
@@ -144,6 +150,7 @@ RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
 #' @param mat A symmetric sparse matrix.
 #' @return A triangular sparse matrix, containing only the upper triangle.
 #' @examples
+#' symmMatrix <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
 #' triangleMatrix <- sym_to_triangle(symmMatrix)
 #'
 #' @export sym_to_triangle
@@ -162,6 +169,7 @@ sym_to_triangle <- function(mat) {
 #' @param trimat A triangular sparse matrix (either upper or lower triangle can be filled).
 #' @return A symmetric sparse matrix.
 #' @examples
+#' triangleMatrix <- Matrix::Matrix(c(1,0,0,2,5,0,1,0,0), 3, sparse = T)
 #' symmMatrix <- triangle_to_sym(triangleMatrix)
 #'
 #' @export triangle_to_sym
@@ -185,7 +193,7 @@ triangle_to_sym <- function(trimat) {
 #' @param to End of the region you want to select. If NULL, the end of the chromosome will be 'to'.
 
 #' @examples
-#' matrix <- Iset_region_to_matrix(Iset, chr = 11, from = 30000000, to = 30100000)
+#' # matrix <- Iset_region_to_matrix(Iset, chr = 11, from = 30000000, to = 30100000)
 #'
 
 Iset_region_to_LFM <- function(Iset, chr, from = NULL, to = NULL) {
@@ -231,8 +239,8 @@ Iset_region_to_LFM <- function(Iset, chr, from = NULL, to = NULL) {
 #' @param to Optional. End of the region you want to select. If NULL, the end of the chromosome will be 'to'.
 #' @return A sparse, upper triangle ligation frequency matrix.
 #' @examples
-#' LFM <- easy_Iset_to_LFM(Iset)
-#' chr2_1_300000 <- easy_Iset_to_LFM(Iset, chr = 2, from = 1, to = 300000)
+#' # LFM <- easy_Iset_to_LFM(Iset)
+#' # chr2_1_300000 <- easy_Iset_to_LFM(Iset, chr = 2, from = 1, to = 300000)
 #'
 easy_Iset_to_LFM <- function(Iset, chr = NULL, from = NULL, to = NULL) {
     if (is.null(chr)) {

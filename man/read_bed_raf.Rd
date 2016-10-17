@@ -24,8 +24,8 @@ containing the interacting restriction fragment pairs.
 Read preprocessed genomic interaction files to produce RFanno and RFpairs.
 }
 \examples{
-RFanno <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[1]]
-RFpairs <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[2]]
+# RFanno <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[1]]
+# RFpairs <- read_bed_raf(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))[[2]]
 
 }
 

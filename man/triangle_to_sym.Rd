@@ -16,6 +16,7 @@ A symmetric sparse matrix.
 Convert a sparse triangle matrix to a sparse symmetric matrix.
 }
 \examples{
+triangleMatrix <- Matrix::Matrix(c(1,0,0,2,5,0,1,0,0), 3, sparse = T)
 symmMatrix <- triangle_to_sym(triangleMatrix)
 
 }

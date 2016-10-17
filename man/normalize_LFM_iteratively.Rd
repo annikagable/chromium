@@ -23,7 +23,7 @@ A binned or unbinned ligation frequency matrix (LFM) is normalized using iterati
 }
 \examples{
 M <- matrix(c(3,0,0,0,7,0,1,9,7),3,3)
-M <- Matrix(M, sparse = TRUE)
+M <- Matrix::Matrix(M, sparse = TRUE)
 normalizedLFM <- normalize_LFM_iteratively(M, 10)
 
 }

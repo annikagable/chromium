@@ -59,7 +59,7 @@ Output will be in PDF format.
 An interaction matrix is plotted, rotated, and if required, smoothed. Using Gviz, tracks can be added as required.
 }
 \examples{
-visualize_chrom(Iset, chr = "11", from = 30000000, to = 30100000,
+# visualize_chrom(Iset, chr = "11", from = 30000000, to = 30100000,
           gen = "mm9", customAnno = cpgIslands, smoothing = 80, filterSize = 3)
 
 }

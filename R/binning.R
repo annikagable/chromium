@@ -37,7 +37,6 @@ bin_chrom <- function(Iset, binSize){
 #' @return The ligation frequency matrix \code{LFM}, a sparse matrix annotated by genomic position,
 #' or an InteractionSet.
 #' @examples
-#' library(chromium)
 #'
 #' # Restriction fragment pairs are given here (RFpairs)
 #' toyRFpairs <- data.frame(RF1 = c(1:15), RF2 = c(5,7,11,12,11,14,10,15,16,15,19,20,14,17,19))
@@ -50,7 +49,7 @@ bin_chrom <- function(Iset, binSize){
 #' toyRFanno <- data.frame(chr, start, end, RF_id)
 #'
 #' # Create a toy ligation frequency matrix
-#' toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, binSize = 3)
+#' toyMatrix <- chromium:::Create_any_resolution_LFM(toyRFpairs, toyRFanno, binSize = 3)
 #'
 #' # In a more realistic example the bin size would range between kilobases and megabases
 #'

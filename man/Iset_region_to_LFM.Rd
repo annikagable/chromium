@@ -19,7 +19,7 @@ Iset_region_to_LFM(Iset, chr, from = NULL, to = NULL)
 Pick a genomic region from an InteractionSet object and convert it into a sparse triangular matrix.
 }
 \examples{
-matrix <- Iset_region_to_matrix(Iset, chr = 11, from = 30000000, to = 30100000)
+# matrix <- Iset_region_to_matrix(Iset, chr = 11, from = 30000000, to = 30100000)
 
 }
 

@@ -41,7 +41,7 @@ RF_id <- c(1:30)
 toyRFanno <- data.frame(chr, start, end, RF_id)
 
 # Create a toy ligation frequency matrix
-toyMatrix <- Create_any_resolution_LFM(toyRFpairs, toyRFanno, binSize = 3)
+toyMatrix <- chromium:::Create_any_resolution_LFM(toyRFpairs, toyRFanno, binSize = 3)
 
 # In a more realistic example the bin size would range between kilobases and megabases
 

@@ -25,7 +25,13 @@ An InteractionSet object containing all interactions from all input raf files, a
 Read preprocessed genomic interaction files into an InteractionSet object.
 }
 \examples{
-myInteractions <- import_chrom(bed = "annotation.bed", raflist = list("1.raf", "2.raf"))
+# You can import several specific raf files from the same directory
+# (the working directory if no workDir is specified).
+# myInteractions <- import_chrom(bed = "annotation.bed",
+#                                raflist = list("1.raf", "2.raf"))
+
+# Or just choose all raf files within a specific directory
+myInteractions <- import_chrom(bed = "RFanno_HindIII.bed", workDir = system.file("extdata", package = "chromium"), binned = F)
 
 }
 

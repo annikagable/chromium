@@ -24,7 +24,7 @@ An InteractionSet object.
 Convert restriction fragment annotation and restriction fragment pair objects to an InteractionSet object.
 }
 \examples{
-Iset <- RFpairs_to_Iset(RFanno, RFpairs)
+# Iset <- RFpairs_to_Iset(RFanno, RFpairs)
 
 }
 

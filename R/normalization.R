@@ -13,7 +13,7 @@
 #' the loss function is given for every iteration of the normalization. If plotLoss = T, the metadata will also contain a
 #' plotted version of the loss function, which can be displayed with metadata(normIset)$lossPlot.
 #' @examples
-#' norm_Iset <- normalize_chrom(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
+#' #norm_Iset <- normalize_chrom(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
 #'
 #' @export normalize_chrom
 
@@ -59,7 +59,7 @@ normalize_chrom <- function(Iset, numberOfIterations = 40L, plotLoss = FALSE){
 #' for every iteration \code{lossFunction}.
 #' @examples
 #' M <- matrix(c(3,0,0,0,7,0,1,9,7),3,3)
-#' M <- Matrix(M, sparse = TRUE)
+#' M <- Matrix::Matrix(M, sparse = TRUE)
 #' normalizedLFM <- normalize_LFM_iteratively(M, 10)
 #'
 #' @export normalize_LFM_iteratively
@@ -119,8 +119,8 @@ normalize_LFM_iteratively <- function(LFM, numberOfIterations, plotLoss = FALSE)
 #' for every iteration \code{lossFunction}.
 #' @examples
 #' M <- matrix(c(3,0,1,0,7,9,1,9,7),3,3)
-#' M <- Matrix(M, sparse = TRUE)
-#' ipf <- IPF_alg(M,10)
+#' M <- Matrix::Matrix(M, sparse = TRUE)
+#' ipf <- chromium:::IPF_alg(M,10)
 #'
 
 IPF_alg <- function(symLFM, numberOfIterations){

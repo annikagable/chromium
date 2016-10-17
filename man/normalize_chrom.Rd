@@ -26,7 +26,7 @@ A binned or unbinned InteractionSet is normalized using iterative proportional f
 iterative matrix balancing algorithm by Pukelsheim and Simeone (2009).
 }
 \examples{
-norm_Iset <- normalize_chrom(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
+#norm_Iset <- normalize_chrom(raw_Iset, numberOfIterations = 40L, plotLoss = FALSE)
 
 }
 

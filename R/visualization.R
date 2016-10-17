@@ -27,7 +27,7 @@
 #' @param sigma In the case of Gaussian smoothing, how large should the sigma of the distribution be?
 #' @return Output will be in PDF format.
 #' @examples
-#' visualize_chrom(Iset, chr = "11", from = 30000000, to = 30100000,
+#' # visualize_chrom(Iset, chr = "11", from = 30000000, to = 30100000,
 #'           gen = "mm9", customAnno = cpgIslands, smoothing = 80, filterSize = 3)
 #'
 #' @export visualize_chrom
@@ -191,7 +191,7 @@ visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneM
 #' @param sigma In the case of Gaussian smoothing, how large should the sigma of the distribution be?
 #' @param binSize Size of bins into which the interaction matrix is binned.
 #' @examples
-#' myTriangle <- rotated_image(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
+#' # myTriangle <- rotated_image(img, scaleCol = 0.02, smoothing = 80, filterSize = 3, binSize = 10000)
 #'
 
 

@@ -18,6 +18,11 @@ Outputs a PDF with number of ligation products (treated as interactions), number
 and plots of distances between interactions and the loss function of normalization (if data are normalized).
 }
 \examples{
+qa <- list(interactionCount = 100,
+interchromosomal = 3,
+intrachromosomal = 97,
+contactDistances = sample(1:225, 100))
+
 plot_qa(qa, reportName = "My_qality_report.pdf")
 
 }

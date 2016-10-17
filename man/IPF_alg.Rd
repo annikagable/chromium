@@ -21,8 +21,8 @@ Iterative proportional fitting (IPF) is used to normalize a sparse matrix.
 }
 \examples{
 M <- matrix(c(3,0,1,0,7,9,1,9,7),3,3)
-M <- Matrix(M, sparse = TRUE)
-ipf <- IPF_alg(M,10)
+M <- Matrix::Matrix(M, sparse = TRUE)
+ipf <- chromium:::IPF_alg(M,10)
 
 }
 

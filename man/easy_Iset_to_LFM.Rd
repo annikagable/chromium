@@ -22,8 +22,8 @@ A sparse, upper triangle ligation frequency matrix.
 Wrapper for Iset_to_LFM (no subsetting) and Iset_region_to_LFM (subsetting by chromosome and, if required, by region).
 }
 \examples{
-LFM <- easy_Iset_to_LFM(Iset)
-chr2_1_300000 <- easy_Iset_to_LFM(Iset, chr = 2, from = 1, to = 300000)
+# LFM <- easy_Iset_to_LFM(Iset)
+# chr2_1_300000 <- easy_Iset_to_LFM(Iset, chr = 2, from = 1, to = 300000)
 
 }
 

@@ -25,7 +25,7 @@ Only those interactions and regions of an InteractionSet which lie within the sp
 This is useful to reduce the object size of the InteractionSet.
 }
 \examples{
-chr2_Iset <- subset_chrom(Iset, chr = 2)
+# chr2_Iset <- subset_chrom(Iset, chr = 2)
 
 }
 

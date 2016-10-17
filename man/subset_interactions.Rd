@@ -24,7 +24,7 @@ This is only useful if you want to add interactions in the other regions later. 
 conversion to matrices, it is more useful to subset the whole InteractionSet, including the regions.
 }
 \examples{
-chr2_Iset <- subset_interactions(Iset, chr=2)
+# chr2_Iset <- subset_interactions(Iset, chr=2)
 
 }
 
