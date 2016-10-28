@@ -17,7 +17,10 @@ the restriction fragment annotation (or bin annotation), and the restriction fra
 The data can be binned or not binned, normalized or not normalized.
 }
 \examples{
-LFM=Iset_to_LFM(Iset)[[1]]
+LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
+Iset <- LFM_to_Iset(LFM, binned = F)
+LFM_back <- Iset_to_LFM(Iset)[[1]]
+LFM == LFM_back
 
 }
 

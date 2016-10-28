@@ -19,7 +19,8 @@ and with the binSize stored as metadata
 The data can be binned or not binned, normalized or not normalized.
 }
 \examples{
-Iset <- LFM_to_Iset(LFM, binned=F)
+LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
+Iset <- LFM_to_Iset(LFM, binned = F)
 
 }
 

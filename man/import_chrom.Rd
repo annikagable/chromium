@@ -31,7 +31,9 @@ Read preprocessed genomic interaction files into an InteractionSet object.
 #                                raflist = list("1.raf", "2.raf"))
 
 # Or just choose all raf files within a specific directory
-myInteractions <- import_chrom(bed = "RFanno_HindIII.bed", workDir = system.file("extdata", package = "chromium"), binned = F)
+myInteractions <- import_chrom(bed = "RFanno_HindIII.bed",
+                               workDir = system.file("extdata", package = "chromium"),
+                               binned = F)
 
 }
 
