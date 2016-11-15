@@ -38,6 +38,14 @@ visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneM
                                   colmapChipseqs = NULL, customAnno = NULL, smooth = "none", smoothing = NULL, filterSize = NULL,
                                   sigma = NULL){
 
+  # shut down all open pdf devices
+
+  devs <-  names(dev.list())
+  if("pdf" %in% devs){
+  pdf_dev_idx <- which(devs == "pdf") + 1
+  sapply(pdf_dev_idx, dev.off)
+  }
+
   stopifnot(xor(is.null(gen), is.null(geneModels)))
   binSize <- S4Vectors::metadata(Iset)$binSize
 
@@ -97,7 +105,21 @@ visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneM
                                          fill = "black", utr5 = "black", utr3 = "black", protein_coding = "black", #make all annotations black
                                          collapseTranscripts = "longest",  background.title = NA#, showTitle = FALSE
       )
-    }
+    }else{
+
+        if(is.null(gen)  && !is.null(geneModels)){
+
+          gm <- Gviz::GeneRegionTrack(geneModels, chromosome = chr,
+                                      genome = NA_character_, #start = from, end = to,
+                                      #transcriptAnnotation = "symbol", stacking = "squish",
+                                      size = 1, name = "RefSeq", col.line = NULL, cex.group = 0.7,
+                                      fill = "black", utr5 = "black", utr3 = "black",
+                                      protein_coding = "black", #make all annotations black
+                                      collapseTranscripts = "longest", background.title = NA)
+
+          }
+      }
+
   }else{
     gm <- NULL
   }
