@@ -4,8 +4,8 @@
 \alias{visualize_chrom}
 \title{Triangle visualization of Hi-C data with tracks for chipseq, genome axis, gene models, and custom data.}
 \usage{
-visualize_chrom(Iset, chr, from = NULL, to = NULL, gen = NULL,
-  geneModels = NULL, printTranscripts = TRUE, outDir = getwd(),
+visualize_chrom(Iset, chr, from = NULL, to = NULL, geneModels = NULL,
+  printTranscripts = TRUE, outDir = getwd(),
   name = "triangle_visualization.pdf", scaleCol = 0.02, chipseqs = NULL,
   chipScale = NULL, colmapChipseqs = NULL, customAnno = NULL,
   smooth = "none", smoothing = NULL, filterSize = NULL, sigma = NULL)
@@ -19,12 +19,11 @@ visualize_chrom(Iset, chr, from = NULL, to = NULL, gen = NULL,
 
 \item{to}{End of the region you want to plot.}
 
-\item{gen}{The genome identifier, used primarily to determine which gene model will be used.
-Give the organism name (e.g. "hsapiens", "mmusculus") if you want to use the most recent assembly from biomart (internet
-connection required). Give one of "mm9", "mm10", "hg19", or "hg38" to use a gene model bundled with the package.
-Leave out if you want to use your own gene model.}
-
-\item{geneModels}{Only input a geneModel GRanges if you want to use your own custom geneModel.}
+\item{geneModels}{This can either be a character identifying a genome or an a
+gene model object compatible with the range argument \link[Gviz]{GeneRegionTrack}. If it is
+a character and is one of "mm9",  "mm10", "hg19", or "hg38" a pre-build gene model
+table is loaded. If it is a valid ENSEMBL organism identifier (mmusculus,
+hsapiens ...), the respective gene model is obtained from ensembl biomart directly.}
 
 \item{printTranscripts}{Boolean. Produce gene model track? Defaults to TRUE.}
 

@@ -6,11 +6,11 @@
 #' @param chr The chromosome name to be plotted with or without "chr", depending on your interactionSet object.
 #' @param from Start of the region you want to plot.
 #' @param to End of the region you want to plot.
-#' @param gen The genome identifier, used primarily to determine which gene model will be used.
-#' Give the organism name (e.g. "hsapiens", "mmusculus") if you want to use the most recent assembly from biomart (internet
-#' connection required). Give one of "mm9", "mm10", "hg19", or "hg38" to use a gene model bundled with the package.
-#' Leave out if you want to use your own gene model.
-#' @param geneModels Only input a geneModel GRanges if you want to use your own custom geneModel.
+#' @param geneModels This can either be a character identifying a genome or an a
+#' gene model object compatible with the range argument \link[Gviz]{GeneRegionTrack}. If it is
+#' a character and is one of "mm9",  "mm10", "hg19", or "hg38" a pre-build gene model
+#' table is loaded. If it is a valid ENSEMBL organism identifier (mmusculus,
+#' hsapiens ...), the respective gene model is obtained from ensembl biomart directly.
 #' @param printTranscripts Boolean. Produce gene model track? Defaults to TRUE.
 #' @param outDir Give the directory where the PDF plot will be saved. Defaults to the working directory.
 #' @param name A string. Filename of the output PDF.
@@ -31,23 +31,30 @@
 #'           gen = "mm9", customAnno = cpgIslands, smoothing = 80, filterSize = 3)
 #'
 #' @export visualize_chrom
-#'
+#' @importFrom purrr is_character
+# @importFrom dplyr filter select
 
-visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneModels = NULL, printTranscripts = TRUE, outDir = getwd(),
-                                  name = "triangle_visualization.pdf", scaleCol = 0.02, chipseqs = NULL, chipScale = NULL,
-                                  colmapChipseqs = NULL, customAnno = NULL, smooth = "none", smoothing = NULL, filterSize = NULL,
-                                  sigma = NULL){
+
+visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, geneModels = NULL,
+                            printTranscripts = TRUE, outDir = getwd(),
+                            name = "triangle_visualization.pdf",
+                            scaleCol = 0.02, chipseqs = NULL,
+                            chipScale = NULL, colmapChipseqs = NULL,
+                            customAnno = NULL, smooth = "none",
+                            smoothing = NULL, filterSize = NULL, sigma = NULL){
 
   # shut down all open pdf devices
 
   devs <-  names(dev.list())
   if("pdf" %in% devs){
-  pdf_dev_idx <- which(devs == "pdf") + 1
-  sapply(pdf_dev_idx, dev.off)
+    pdf_dev_idx <- which(devs == "pdf") + 1
+    sapply(pdf_dev_idx, dev.off)
   }
 
-  stopifnot(xor(is.null(gen), is.null(geneModels)))
+
   binSize <- S4Vectors::metadata(Iset)$binSize
+  if( is.null(binSize) ) stop("The provided InteractionSet does contain a binsize parameter
+                           in its metadata")
 
   max <- max(SummarizedExperiment::end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
 
@@ -64,10 +71,13 @@ visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneM
   ### Build the tracks ###
 
   ## Rotated matrix track #vary size =37
-  interaction.matrix <- Gviz::CustomTrack(plottingFunction = function(GdObject, prepare){
-      if(!prepare) rotated_image(img, scaleCol, smooth, smoothing, filterSize, sigma, binSize)
+  interaction.matrix <- Gviz::CustomTrack(plottingFunction = function(GdObject,
+                                                                      prepare){
+      if(!prepare) rotated_image(img, scaleCol, smooth, smoothing, filterSize,
+                                 sigma, binSize)
       return(GdObject)
-    }, size = 37, name = "rotated_image", col.title = "white", background.title = NA, showTitle = F)
+    }, size = 37, name = "rotated_image", col.title = "white",
+    background.title = NA, showTitle = FALSE)
 
 
   ## GeneModel track
@@ -77,52 +87,69 @@ visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, gen = NULL, geneM
     if(S4Vectors::grepl("chr", chr) == 0) chr.reg = paste0("chr", chr) else chr.reg = chr
     id <- c("mm9", "mm10", "hg19", "hg38")
 
-    if(!is.null(gen) && gen %in% id){
-
-      # offline: load pregenerated generegiontracks
-      genomes <- data.frame(id = id, file = c("gm_mm9.RData", "gm_mm10.RData", "gm_hg19.RData", "gm_hg38.RData"))
-      rdata <- as.character(genomes[genomes$id == gen,]$file)
-      load(file.path("data", rdata))
+    # check supported types
+    supported_types <- c("TxDb", "GRanges", "IRanges", "data.frame", "character", "NULL")
+    if(length(intersect(class(geneModels), supported_types)) == 0 ){
+      stop("geneModels must be one of", supported_types)
     }
-    if(!is.null(gen) && gen %in% id && !is.null(geneModels)){
 
-      # offline: use custom geneModels provided by user or already in the environment
-      gm <- Gviz::GeneRegionTrack(geneModels, chromosome = chr, genome = 'gen', #start = from, end = to,
+    # first branch => geneModels is a character: either get precomputed
+    # gene models or query them directly from ensembl biomart
+
+    if(is_character(geneModels) ){
+
+      if( (geneModels %in% id) ){
+      # offline: load pregenerated generegiontracks
+      eval(parse(text = paste0("data(\"gm_", geneModels, "\")")))
+
+      gm <- Gviz::GeneRegionTrack(range = get(paste0("gm_",geneModels)),
+                                  chromosome = chr, genome = geneModels, #start = from, end = to,
                                   #transcriptAnnotation = "symbol", stacking = "squish",
                                   size = 1, name = "RefSeq", col.line = NULL, cex.group = 0.7,
-                                  fill = "black", utr5 = "black", utr3 = "black", protein_coding = "black", #make all annotations black
-                                  collapseTranscripts = "longest", background.title = NA#, showTitle = F
+                                  fill = "black", utr5 = "black", utr3 = "black", protein_coding = "black",
+                                  #make all annotations black
+                                  collapseTranscripts = "longest", background.title = NA#, showTitle = FALSE
       )
-    }else if(is.null(geneModels)){
+      } else {
 
       # online: get most recent gene model for any organism from biomart
-      dataset <- paste0(gen, "_gene_ensembl")
+      dataset <- paste0(geneModels, "_gene_ensembl")
       mart <- biomaRt::useMart(biomart = "ENSEMBL_MART_ENSEMBL", dataset = dataset)
-      if(!dataset %in% biomaRt::listDatasets(mart)$dataset) stop(gen, " is not a valid organism identifier.
-                                                      Correct examples: mmusculus, hsapiens")
-      gm <- Gviz::BiomartGeneRegionTrack(chromosome = chr.reg, genome = gen , biomart = mart, start = from, end = to,
+
+      if(!dataset %in% biomaRt::listDatasets(mart)$dataset) stop(geneModels,
+                                          " is not a valid organism identifier.
+                                          examples of correct identifiers:
+                                          mmusculus, hsapiens")
+
+      gm <- Gviz::BiomartGeneRegionTrack(chromosome = chr.reg , biomart = mart, start = from, end = to,
                                          size = 1, name = "RefSeq", col.line = NULL, cex.group = 0.7,
-                                         fill = "black", utr5 = "black", utr3 = "black", protein_coding = "black", #make all annotations black
+                                         fill = "black", utr5 = "black", utr3 = "black", protein_coding =
+                                           "black", #make all annotations black
                                          collapseTranscripts = "longest",  background.title = NA#, showTitle = FALSE
       )
-    }else{
-
-        if(is.null(gen)  && !is.null(geneModels)){
-
-          gm <- Gviz::GeneRegionTrack(geneModels, chromosome = chr,
-                                      genome = NA_character_, #start = from, end = to,
-                                      #transcriptAnnotation = "symbol", stacking = "squish",
-                                      size = 1, name = "RefSeq", col.line = NULL, cex.group = 0.7,
-                                      fill = "black", utr5 = "black", utr3 = "black",
-                                      protein_coding = "black", #make all annotations black
-                                      collapseTranscripts = "longest", background.title = NA)
-
-          }
       }
 
-  }else{
-    gm <- NULL
-  }
+    } else {
+
+      # second branch => geneModels not a character but an actual gene model
+      # use it with Gviz directly
+
+      if(!is.null(geneModels)){
+
+        # offline: use custom geneModels provided by user or already in the environment
+        gm <- Gviz::GeneRegionTrack(geneModels, chromosome = chr,
+                                    #start = from, end = to,
+                                    #transcriptAnnotation = "symbol", stacking = "squish",
+                                    size = 1, name = "RefSeq", col.line = NULL, cex.group = 0.7,
+                                    fill = "black", utr5 = "black", utr3 = "black", protein_coding = "black",
+                                    #make all annotations black
+                                    collapseTranscripts = "longest", background.title = NA#, showTitle = F
+        )
+      } else {
+      gm <- NULL
+      }
+    }# if()
+  }# if(transcripts)
 
   ## Chipseq track
 

@@ -28,7 +28,9 @@ Imports: Matrix,
     biomaRt,
     methods,
     stats,
-    utils
+    utils,
+    purrr,
+    dplyr
 Suggests: knitr,
     rmarkdown,
     testthat
