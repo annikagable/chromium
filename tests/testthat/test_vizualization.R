@@ -1,3 +1,4 @@
+library(tibble)
 
 context("Triangle vizualization")
 

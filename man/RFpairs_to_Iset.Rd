@@ -4,7 +4,7 @@
 \alias{RFpairs_to_Iset}
 \title{Convert restriction fragment annotation and restriction fragment pair objects to an InteractionSet object.}
 \usage{
-RFpairs_to_Iset(RFanno, RFpairs, binned = F)
+RFpairs_to_Iset(RFanno, RFpairs, binned = FALSE)
 }
 \arguments{
 \item{RFanno}{A dataframe giving the genomic annotation of the restriction fragments. Columns are: chromosome, start of

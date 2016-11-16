@@ -66,17 +66,23 @@ LFM_to_Iset <- function(LFM, binned = F) {
 #' LFM_back <- Iset_to_LFM(Iset)[[1]]
 #' LFM == LFM_back
 #'
-#'@export Iset_to_LFM
+#' @export Iset_to_LFM
 
 Iset_to_LFM <- function(Iset) {
 
     # Create RFanno object
-    RFanno <- data.frame(InteractionSet::regions(Iset), stringsAsFactors = F)[, c(1:3, 6)]
+    RFanno <- data.frame(InteractionSet::regions(Iset), stringsAsFactors = FALSE)
+    # add IDs column if it  does not exist
+    if( !("IDs" %in% colnames(RFanno)) ){
+      RFanno$IDs <- seq_len(nrow(RFanno))
+    }
+
+    RFanno <- RFanno[,  c("seqnames", "start", "end", "IDs")]
     names(RFanno) <- c("chr", "start", "end", "RF_id")
     class(RFanno$chr) <- "character"
     class(RFanno$start) <- "numeric"
     class(RFanno$end) <- "numeric"
-    RFanno <- RFanno[order(RFanno[, 4]), ]
+    RFanno <- RFanno[order(RFanno$RF_id), ]
 
     # Create RFpairs object
     Iset <- InteractionSet::swapAnchors(Iset)
@@ -91,7 +97,7 @@ Iset_to_LFM <- function(Iset) {
     # Get matrix size
     matSize <- length(InteractionSet::regions(Iset))
 
-    LFM <- Matrix::Matrix(0, nrow = matSize, ncol = matSize, sparse = T)
+    LFM <- Matrix::Matrix(0, nrow = matSize, ncol = matSize, sparse = TRUE)
     LFM[summLFM[, 1:2]] <- summLFM[, 3]
 
     rownames(LFM) <- paste(RFanno$chr, RFanno$start, RFanno$end, sep = "_")
@@ -114,7 +120,7 @@ Iset_to_LFM <- function(Iset) {
 #' # Iset <- RFpairs_to_Iset(RFanno, RFpairs)
 #'
 
-RFpairs_to_Iset <- function(RFanno, RFpairs, binned = F) {
+RFpairs_to_Iset <- function(RFanno, RFpairs, binned = FALSE) {
 
     ranges <- GenomicRanges::GRanges(RFanno$chr, IRanges::IRanges(RFanno$start, RFanno$end), IDs = RFanno$RF_id)
 
@@ -215,7 +221,8 @@ Iset_region_to_LFM <- function(Iset, chr, from = NULL, to = NULL) {
     ## convert interactionSet to matrix
     Iset <- InteractionSet::swapAnchors(Iset)
     region <- GenomicRanges::GRanges(chr, IRanges::IRanges(from, to))
-    mat <- InteractionSet::inflate(Iset, region, region, sparse = T, swap = F, fill = SummarizedExperiment::assay(Iset))
+    mat <- InteractionSet::inflate(Iset, region, region, sparse = TRUE,
+                                   swap = FALSE, fill = SummarizedExperiment::assay(Iset))
     mat <- Matrix::as.matrix(mat)
 
     ## old version indices=which(start(ranges(regions(Iset))) >= from & start(ranges(regions(Iset))) <= to & as.vector(seqnames(regions(Iset))) == chr) mat =
