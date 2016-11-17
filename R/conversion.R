@@ -101,7 +101,7 @@ Iset_to_LFM <- function(Iset, iset_col = 1, assay_number = 1) {
     # Store the interaction pairs and frequencies in a summary(LFM)
     summLFM <- as.data.frame(InteractionSet::anchors(Iset, id = TRUE))
     summLFM <- cbind(as.matrix(summLFM),
-               SummarizedExperiment::assay(Iset, assay_number)[, 1])
+               SummarizedExperiment::assay(Iset, assay_number)[, iset_col])
 
     # Get matrix size
     matSize <- length(InteractionSet::regions(Iset))

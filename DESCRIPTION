@@ -30,7 +30,9 @@ Imports: Matrix,
     stats,
     utils,
     purrr,
-    dplyr
+    dplyr,
+    HiCseg,
+    psych
 Suggests: knitr,
     rmarkdown,
     testthat
