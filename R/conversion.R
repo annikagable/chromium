@@ -58,7 +58,9 @@ LFM_to_Iset <- function(LFM, binned = FALSE) {
 #' The data can be binned or not binned, normalized or non--normalized.
 #'
 #' @param Iset An InteractionSet object
-#' @param Iset_col The column of the assay slot of the Iset to extract. This
+#' @param assay_number If the Iset contains multiple assays, this gives the
+#' number of the assay to extract.
+#' @param Iset_col The column of the assay to extract. This
 #' column treated as corresponding to one ligation frequency
 #' matrix. The function creates one ligation frequency matrix from one column of
 #' the assay slot at a time.
@@ -74,7 +76,7 @@ LFM_to_Iset <- function(LFM, binned = FALSE) {
 #'
 #' @export Iset_to_LFM
 
-Iset_to_LFM <- function(Iset, iset_col = 1) {
+Iset_to_LFM <- function(Iset, iset_col = 1, assay_number = 1) {
 
     # Create RFanno object
     RFanno <- data.frame(InteractionSet::regions(Iset), stringsAsFactors = FALSE)
@@ -98,8 +100,8 @@ Iset_to_LFM <- function(Iset, iset_col = 1) {
 
     # Store the interaction pairs and frequencies in a summary(LFM)
     summLFM <- as.data.frame(InteractionSet::anchors(Iset, id = TRUE))
-    summLFM <- cbind(as.matrix(summLFM), SummarizedExperiment::assay(Iset,
-                                                                     iset_col))
+    summLFM <- cbind(as.matrix(summLFM),
+               SummarizedExperiment::assay(Iset, assay_number)[, 1])
 
     # Get matrix size
     matSize <- length(InteractionSet::regions(Iset))
