@@ -8,12 +8,12 @@
 #' @return An interaction set object containing the information from the LFM and the genomic annotation,
 #' and with the binSize stored as metadata
 #' @examples
-#' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
-#' Iset <- LFM_to_Iset(LFM, binned = F)
+#' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = TRUE)
+#' Iset <- LFM_to_Iset(LFM, binned = FALSE)
 #'
 #' @export LFM_to_Iset
 
-LFM_to_Iset <- function(LFM, binned = F) {
+LFM_to_Iset <- function(LFM, binned = FALSE) {
 
     LFM <- sym_to_triangle(LFM)
     if (sum(LFM) == 0)  warning("You are converting an empty matrix.")
@@ -29,7 +29,7 @@ LFM_to_Iset <- function(LFM, binned = F) {
     # get the annotation from the LFM rownames
     strings <- strsplit(rownames(LFM), split = "_")
     anno <- do.call(rbind, strings)
-    anno <- as.data.frame(anno, stringsAsFactors = F)
+    anno <- as.data.frame(anno, stringsAsFactors = FALSE)
     names(anno) <- c("chr", "start", "end")
     anno[, 2:3] <- data.frame(lapply(anno[, 2:3], as.numeric))
     anno$ID <- seq_along(anno$start)
@@ -55,20 +55,26 @@ LFM_to_Iset <- function(LFM, binned = F) {
 
 #' Convert an InteractionSet object into a ligation frequency matrix.
 #'
-#' The data can be binned or not binned, normalized or not normalized.
+#' The data can be binned or not binned, normalized or non--normalized.
 #'
 #' @param Iset An InteractionSet object
-#' @return A list consisting of: the sparse ligation frequency matrix with the genomic annotation as rownames and colnames,
-#' the restriction fragment annotation (or bin annotation), and the restriction fragment pairs (or bin pairs).
+#' @param Iset_col The column of the assay slot of the Iset to extract. This
+#' column treated as corresponding to one ligation frequency
+#' matrix. The function creates one ligation frequency matrix from one column of
+#' the assay slot at a time.
+#' @return A list consisting of: the sparse ligation frequency matrix with t
+#' he genomic annotation as rownames and colnames,
+#' the restriction fragment annotation (or bin annotation), and the restriction
+#' fragment pairs (or bin pairs).
 #' @examples
-#' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
-#' Iset <- LFM_to_Iset(LFM, binned = F)
+#' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = TRUE)
+#' Iset <- LFM_to_Iset(LFM, binned = FALSE)
 #' LFM_back <- Iset_to_LFM(Iset)[[1]]
 #' LFM == LFM_back
 #'
 #' @export Iset_to_LFM
 
-Iset_to_LFM <- function(Iset) {
+Iset_to_LFM <- function(Iset, iset_col = 1) {
 
     # Create RFanno object
     RFanno <- data.frame(InteractionSet::regions(Iset), stringsAsFactors = FALSE)
@@ -91,8 +97,9 @@ Iset_to_LFM <- function(Iset) {
     names(RFpairs) <- c("RF1", "RF2")
 
     # Store the interaction pairs and frequencies in a summary(LFM)
-    summLFM <- as.data.frame(InteractionSet::anchors(Iset, id = T))
-    summLFM <- cbind(as.matrix(summLFM), SummarizedExperiment::assay(Iset))
+    summLFM <- as.data.frame(InteractionSet::anchors(Iset, id = TRUE))
+    summLFM <- cbind(as.matrix(summLFM), SummarizedExperiment::assay(Iset,
+                                                                     iset_col))
 
     # Get matrix size
     matSize <- length(InteractionSet::regions(Iset))
@@ -156,7 +163,7 @@ RFpairs_to_Iset <- function(RFanno, RFpairs, binned = FALSE) {
 #' @param mat A symmetric sparse matrix.
 #' @return A triangular sparse matrix, containing only the upper triangle.
 #' @examples
-#' symmMatrix <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = T)
+#' symmMatrix <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = TRUE)
 #' triangleMatrix <- sym_to_triangle(symmMatrix)
 #'
 #' @export sym_to_triangle
@@ -175,7 +182,7 @@ sym_to_triangle <- function(mat) {
 #' @param trimat A triangular sparse matrix (either upper or lower triangle can be filled).
 #' @return A symmetric sparse matrix.
 #' @examples
-#' triangleMatrix <- Matrix::Matrix(c(1,0,0,2,5,0,1,0,0), 3, sparse = T)
+#' triangleMatrix <- Matrix::Matrix(c(1,0,0,2,5,0,1,0,0), 3, sparse = TRUE)
 #' symmMatrix <- triangle_to_sym(triangleMatrix)
 #'
 #' @export triangle_to_sym
@@ -226,7 +233,7 @@ Iset_region_to_LFM <- function(Iset, chr, from = NULL, to = NULL) {
     mat <- Matrix::as.matrix(mat)
 
     ## old version indices=which(start(ranges(regions(Iset))) >= from & start(ranges(regions(Iset))) <= to & as.vector(seqnames(regions(Iset))) == chr) mat =
-    ## InteractionSet::inflate(Iset, indices, indices, sparse=T, swap=F, fill=SummarizedExperiment::assay(Iset))
+    ## InteractionSet::inflate(Iset, indices, indices, sparse=TRUE, swap=FALSE, fill=SummarizedExperiment::assay(Iset))
 
     ## produce rownames and colnames for the matrix
     olap = IRanges::subsetByOverlaps(InteractionSet::regions(Iset), region)

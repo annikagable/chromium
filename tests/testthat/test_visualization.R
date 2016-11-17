@@ -1,6 +1,5 @@
-library(tibble)
 
-context("Triangle vizualization")
+context("Triangle visualization")
 
 test_that("specifying_a_genomic_model_by_name_works", {
 

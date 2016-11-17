@@ -53,7 +53,8 @@ visualize_chrom <- function(Iset, chr, from = NULL, to = NULL, geneModels = NULL
 
 
   binSize <- S4Vectors::metadata(Iset)$binSize
-  if( is.null(binSize) ) stop("The provided InteractionSet does contain a binsize parameter
+  if( is.null(binSize) ) stop("The provided InteractionSet does not contain
+                           a binsize parameter
                            in its metadata")
 
   max <- max(SummarizedExperiment::end(InteractionSet::regions(Iset)[GenomicRanges::seqnames(InteractionSet::regions(Iset)) == chr]))
