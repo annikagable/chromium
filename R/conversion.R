@@ -85,9 +85,9 @@ Iset_to_LFM <- function(Iset, iset_col = 1) {
 
     RFanno <- RFanno[,  c("seqnames", "start", "end", "IDs")]
     names(RFanno) <- c("chr", "start", "end", "RF_id")
-    class(RFanno$chr) <- "character"
-    class(RFanno$start) <- "numeric"
-    class(RFanno$end) <- "numeric"
+    RFanno$chr <- as.character(RFanno$chr)
+    RFanno$start <- as.numeric(RFanno$start)
+    RFanno$end <- as.numeric(RFanno$end)
     RFanno <- RFanno[order(RFanno$RF_id), ]
 
     # Create RFpairs object
