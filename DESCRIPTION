@@ -31,8 +31,8 @@ Imports: Matrix,
     utils,
     purrr,
     dplyr,
-    HiCseg,
-    psych
+    psych,
+    BiocParallel
 Suggests: knitr,
     rmarkdown,
     testthat
