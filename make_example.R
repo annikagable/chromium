@@ -46,14 +46,16 @@ start <- rep.int(seq(1,30,by=3),3)
 end <- start+2
 RF_id <- c(1:30)
 RFanno <- data.frame(chr,start,end,RF_id)
-RFanno$chr <- as.character(exRFanno$chr)
+RFanno$chr <- as.character(RFanno$chr)
 
 # write RFanno into a bed file
 write.table(RFanno, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'), row.names = F, col.names = F, sep = "\t")
 
 # Make an LFM
-toyLFM <- Create_any_resolution_LFM(RFpairs,RFanno)
-toyLFM
+exLFM <- Create_any_resolution_LFM(RFpairs,RFanno)
+exLFM
+saveRDS(exLFM, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'))
+
 
 # import RFpairs and RFanno from file
 
@@ -63,3 +65,10 @@ toyIset_imported <- import_chrom(bed = 'exRFanno.bed',
                                  binned = T)
 interactions(toyIset_imported) # so far so good
 
+converted <- Iset_to_LFM(toyIset_imported)
+
+all.equal(converted[[1]], toyLFM)
+
+converted2 <- LFM_to_Iset(toyLFM)
+converted2
+interactions(converted2)

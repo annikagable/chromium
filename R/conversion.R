@@ -4,6 +4,7 @@
 #' The data can be binned or not binned, normalized or not normalized.
 #'
 #' @param LFM A sparse ligation frequency matrix, with the genomic annotation as row and column names.
+#' Genomic annotation has to follow the format chr_start_end, e.g. 4_201000_202000.
 #' @param binned Boolean, whether the matrix is already binned. Defaults to TRUE.
 #' @return An interaction set object containing the information from the LFM and the genomic annotation,
 #' and with the binSize stored as metadata
@@ -17,7 +18,7 @@ LFM_to_Iset <- function(LFM, binned = FALSE) {
 
     LFM <- sym_to_triangle(LFM)
     if (sum(LFM) == 0)  warning("You are converting an empty matrix.")
-    if (is.null(rownames(LFM))) stop("No row names present. Row and column names of the
+    if (is.null(rownames(LFM))) stop("No row names present. Row and column names of the matrix
                                      need to be provided in chr_start_end format, e.g. 4_201000_202000.")
 
     # summarize normalized (or non-normalized) sparse matrix
@@ -55,19 +56,18 @@ LFM_to_Iset <- function(LFM, binned = FALSE) {
 
 #' Convert an InteractionSet object into a ligation frequency matrix.
 #'
-#' The data can be binned or not binned, normalized or non--normalized.
+#' The data can be binned or not binned, normalized or non-normalized.
 #'
 #' @param Iset An InteractionSet object
-#' @param assay_number If the Iset contains multiple assays, this gives the
+#' @param assayNumber If the Iset contains multiple assays, this gives the
 #' number of the assay to extract.
-#' @param Iset_col The column of the assay to extract. This
-#' column treated as corresponding to one ligation frequency
-#' matrix. The function creates one ligation frequency matrix from one column of
-#' the assay slot at a time.
-#' @return A list consisting of: the sparse ligation frequency matrix with t
-#' he genomic annotation as rownames and colnames,
-#' the restriction fragment annotation (or bin annotation), and the restriction
-#' fragment pairs (or bin pairs).
+#' @param IsetCol The column of the assay to extract. This column is treated
+#' as corresponding to one ligation frequency matrix. The function creates
+#' one ligation frequency matrix from one column of the assay slot at a time.
+#' @return A list consisting of: the sparse ligation frequency matrix with
+#' the genomic annotation as rownames and colnames, the restriction fragment
+#' annotation (or bin annotation), and the restriction fragment pairs
+#' (or bin pairs).
 #' @examples
 #' LFM <- Matrix::Matrix(c(1,2,1,2,5,0,1,0,0), 3, sparse = TRUE)
 #' Iset <- LFM_to_Iset(LFM, binned = FALSE)
@@ -76,7 +76,7 @@ LFM_to_Iset <- function(LFM, binned = FALSE) {
 #'
 #' @export Iset_to_LFM
 
-Iset_to_LFM <- function(Iset, iset_col = 1, assay_number = 1) {
+Iset_to_LFM <- function(Iset, IsetCol = 1, assayNumber = 1) {
 
     # Create RFanno object
     RFanno <- data.frame(InteractionSet::regions(Iset), stringsAsFactors = FALSE)
@@ -101,11 +101,12 @@ Iset_to_LFM <- function(Iset, iset_col = 1, assay_number = 1) {
     # Store the interaction pairs and frequencies in a summary(LFM)
     summLFM <- as.data.frame(InteractionSet::anchors(Iset, id = TRUE))
     summLFM <- cbind(as.matrix(summLFM),
-               SummarizedExperiment::assay(Iset, assay_number)[, iset_col])
+               SummarizedExperiment::assay(Iset, assayNumber)[, IsetCol])
 
     # Get matrix size
     matSize <- length(InteractionSet::regions(Iset))
 
+    # Create and populate sparse matrix
     LFM <- Matrix::Matrix(0, nrow = matSize, ncol = matSize, sparse = TRUE)
     LFM[summLFM[, 1:2]] <- summLFM[, 3]
 
