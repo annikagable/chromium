@@ -1,6 +1,66 @@
 #' Make example LFM and Iset
+#' my aims are
+#' i) create simple examples to demonstrate all package functions on
+#' ii) to use the examples to debug the input and conversion functions
+#'
 
-library(InteractionSet)
+
+devtools::load_all()
+
+#' Create example restriction fragment pairs
+
+RFpairs <- data.frame(RF1 = c(1,1:18), RF2 = c(2,5,7,11,12,11,14,10,15,16,15,19,20,14,17,19,17,20,20))
+RFpairs
+
+#' Write the RFpairs to file
+
+write.table(RFpairs, file = file.path(system.file('extdata', package = 'chromium'), 'exRFpairs.raf'), row.names = F, col.names = F, sep = "\t")
+
+#' Create example genomic annotation of the restriction fragment pairs
+
+chr <- as.character(c(rep.int(1,10),rep.int(2,10),rep.int(3,10)))
+start <- rep.int(seq(1,30,by=3),3)
+end <- start+2
+RF_id <- c(1:30)
+RFanno <- data.frame(chr,start,end,RF_id)
+RFanno$chr <- as.character(RFanno$chr)
+
+#' Write RFanno into a bed file
+
+write.table(RFanno, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'), row.names = F, col.names = F, sep = "\t")
+
+#' From the annotation and the restriction fragment pairs, create an LFM (ligation frequency matrix)
+
+exLFM <- Create_any_resolution_LFM(RFpairs,RFanno)
+exLFM
+saveRDS(exLFM, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'))
+
+
+#' Import RFpairs and RFanno from file into an InteractionSet
+
+toyIset_imported <- import_chrom(bed = 'exRFanno.bed',
+                                 workDir = system.file('extdata', package = 'chromium'),
+                                 raflist = list("exRFpairs.raf"),
+                                 binned = T)
+interactions(toyIset_imported)
+
+#' so far so good
+#' Convert imported Iset into an LFM and check if it's the same as the LFM created directly from the pairs.
+
+converted <- Iset_to_LFM(toyIset_imported)
+all.equal(converted[[1]], toyLFM)
+all.equal(converted[[2]], RFanno)
+all.equal(converted[[3]], RFpairs)
+
+#' Now convert LFM into Iset in order to check that it works correctly
+
+converted2 <- LFM_to_Iset(toyLFM, binned = T)
+all.equal(converted2, toyIset_imported)
+
+#' great, conversion works correctly on toy example
+
+
+### old example
 
 # # import the exmple data
 # Example_Iset <- chromium::import_chrom(bed = "RFanno_HindIII.bed",
@@ -26,49 +86,3 @@ library(InteractionSet)
 # small_chr2_LFM <- chromium::Iset_to_LFM(small_chr2)[[1]]
 #
 # small_chr2_LFM
-
-###########################################
-# Rather make toy example than a real one #
-###########################################
-# my aims are
-# i) create simple examples to demonstrate all package functions on
-# ii) to use the examples to debug the input and conversion functions
-
-# create restriction fragment pairs
-RFpairs <- data.frame(RF1 = c(1,1:18), RF2 = c(2,5,7,11,12,11,14,10,15,16,15,19,20,14,17,19,17,20,20))
-
-# write the RFpairs to file
-write.table(RFpairs, file = file.path(system.file('extdata', package = 'chromium'), 'exRFpairs.raf'), row.names = F, col.names = F, sep = "\t")
-
-# genomic annotation of the restriction fragment pairs
-chr <- as.character(c(rep.int(1,10),rep.int(2,10),rep.int(3,10)))
-start <- rep.int(seq(1,30,by=3),3)
-end <- start+2
-RF_id <- c(1:30)
-RFanno <- data.frame(chr,start,end,RF_id)
-RFanno$chr <- as.character(RFanno$chr)
-
-# write RFanno into a bed file
-write.table(RFanno, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'), row.names = F, col.names = F, sep = "\t")
-
-# Make an LFM
-exLFM <- Create_any_resolution_LFM(RFpairs,RFanno)
-exLFM
-saveRDS(exLFM, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'))
-
-
-# import RFpairs and RFanno from file
-
-toyIset_imported <- import_chrom(bed = 'exRFanno.bed',
-                                 workDir = system.file('extdata', package = 'chromium'),
-                                 raflist = list("exRFpairs.raf"),
-                                 binned = T)
-interactions(toyIset_imported) # so far so good
-
-converted <- Iset_to_LFM(toyIset_imported)
-
-all.equal(converted[[1]], toyLFM)
-
-converted2 <- LFM_to_Iset(toyLFM)
-converted2
-interactions(converted2)
