@@ -31,36 +31,43 @@ write.table(RFanno, file = file.path(system.file('extdata', package = 'chromium'
 
 #' From the annotation and the restriction fragment pairs, create an LFM (ligation frequency matrix)
 
-exLFM <- Create_any_resolution_LFM(RFpairs,RFanno)
-exLFM
-saveRDS(exLFM, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'))
+exampleLFM <- Create_any_resolution_LFM(RFpairs,RFanno)
+exampleLFM
 
 
 #' Import RFpairs and RFanno from file into an InteractionSet
 
-toyIset_imported <- import_chrom(bed = 'exRFanno.bed',
+exampleIset <- import_chrom(bed = 'exRFanno.bed',
                                  workDir = system.file('extdata', package = 'chromium'),
                                  raflist = list("exRFpairs.raf"),
                                  binned = T)
-interactions(toyIset_imported)
+interactions(exampleIset)
 
 #' so far so good
 #' Convert imported Iset into an LFM and check if it's the same as the LFM created directly from the pairs.
 
-converted <- Iset_to_LFM(toyIset_imported)
-all.equal(converted[[1]], toyLFM)
+converted <- Iset_to_LFM(exampleIset)
+all.equal(converted[[1]], exampleLFM)
 all.equal(converted[[2]], RFanno)
 all.equal(converted[[3]], RFpairs)
 
 #' Now convert LFM into Iset in order to check that it works correctly
 
-converted2 <- LFM_to_Iset(toyLFM, binned = T)
-all.equal(converted2, toyIset_imported)
+converted2 <- LFM_to_Iset(exampleLFM, binned = T)
+all.equal(converted2, exampleIset)
 
-#' great, conversion works correctly on toy example
+#' Great, conversion works correctly on toy example.
+#'
+#' Save the data in their respective folders: The example data will be saved in data:
+
+devtools::use_data(exampleLFM, exampleIset)
+
+#' The example raw data (i.e. RFanno and RFpairs) is already saved in inst/extdata
 
 
-### old example
+###################
+### old example ###
+###################
 
 # # import the exmple data
 # Example_Iset <- chromium::import_chrom(bed = "RFanno_HindIII.bed",
