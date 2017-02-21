@@ -50,8 +50,10 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 
   # create restriction fragment annotation
   message(paste0("Reading restriction fragment annotation from ", bed))
-  RFanno <- utils::read.delim(file.path(workDir, bed), header = FALSE, sep = "\t")
+  RFanno <- utils::read.delim(file.path(workDir, bed), header = FALSE, sep = "\t",
+                              colClasses = c("character", "numeric","numeric", "numeric"))
   if(ncol(RFanno) != 4) stop("Your annotation file needs to have four columns: chr, start, end, and ID.")
+  if(any(RFanno[ ,2:4]) < 0) stop("Start, end, and ID columns need to be positive integers or doubles.")
 
   message("Sorting annotation by restriction fragment IDs (4th column).")
   RFanno <- RFanno[ SummarizedExperiment::order(RFanno[ ,4]), ]
@@ -64,9 +66,20 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
     raflist <- list.files(workDir, pattern = "*.raf")
   }
   message("Reading interactions from your .raf file(s).")
-  pairslist <- lapply(raflist, function(file){
-    df <- utils::read.delim(file.path(workDir, file), header = FALSE, sep = "\t")
-    stopifnot(ncol(df) == 2)
+
+  pairslist <- lapply(raflist, function(f){
+    df <- utils::read.delim(file.path(workDir, f), header = FALSE, sep = "\t", na.strings = c("NA", "NaN", ""),
+                            colClasses = c("numeric", "numeric"))
+    if(ncol(df) != 2) {
+      stop(paste0("The .raf file ", f, " contains more than two colums."))
+    }
+    if(anyNA(df)) {
+      stop(paste0("The .raf file ", f, " contains missing restriction fragment IDs."))
+    }
+    if(any( df < 0 )) {  # could also use sum( df < 0 )
+      stop(paste0("The .raf file ", f, " contains negative restriction fragment IDs. ",
+                                         "All IDs need to be positive integers or doubles."))
+    }
     return(df)
   })
   RFpairs <- do.call(rbind,pairslist)

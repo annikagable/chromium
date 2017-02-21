@@ -9,12 +9,26 @@ devtools::load_all()
 
 #' Create example restriction fragment pairs
 
+options(digits=22)
 RFpairs <- data.frame(RF1 = c(1,1:18), RF2 = c(2,5,7,11,12,11,14,10,15,16,15,19,20,14,17,19,17,20,20))
 RFpairs
+RFpairsLarge <- data.frame(RF1 = c(9000001,1:18), RF2 = c(6000000000005,9e+09,7,11,12,11,14,10,15,16,15,19,20,14,17,19,17,20,20))
+RFpairsLarge
+RFpairs3Cols <- data.frame(RF1 = c(1,1:18), RF2 = c(2,5,7,11,12,11,14,10,15,16,15,19,20,14,17,19,17,20,20), extra = c(1:19))
+RFpairs3Cols
 
 #' Write the RFpairs to file
 
-write.table(RFpairs, file = file.path(system.file('extdata', package = 'chromium'), 'exRFpairs.raf'), row.names = F, col.names = F, sep = "\t")
+setwd(system.file('extdata', package = 'chromium'))
+
+write.table(RFpairs, file = 'exRFpairs.raf', row.names = F, col.names = F, sep = "\t")
+write.table(RFpairsLarge, file = 'largeRFpairs.raf', row.names = F, col.names = F, sep = "\t")
+write.table(RFpairs, file = 'characterRFpairs.raf', row.names = F, col.names = T, sep = "\t")
+write.table(RFpairs3Cols, file = '3colsRFpairs.raf', row.names = F, col.names = F, sep = "\t")
+system("cut -f1 exRFpairs.raf > tmp1")
+system("cut -f2 exRFpairs.raf | head -n5 > tmp2")
+system("paste tmp1 tmp2 > missingRFpairs.raf")
+system("rm tmp1 tmp2")
 
 #' Create example genomic annotation of the restriction fragment pairs
 
@@ -27,7 +41,11 @@ RFanno$chr <- as.character(RFanno$chr)
 
 #' Write RFanno into a bed file
 
-write.table(RFanno, file = file.path(system.file('extdata', package = 'chromium'), 'exRFanno.bed'), row.names = F, col.names = F, sep = "\t")
+write.table(RFanno, file = 'exRFanno.bed', row.names = F, col.names = F, sep = "\t")
+
+#' Save RFanno and RFpairs in R object to use for testing purposes
+
+devtools::use_data(x, mtcars, internal = TRUE)
 
 #' From the annotation and the restriction fragment pairs, create an LFM (ligation frequency matrix)
 
