@@ -59,7 +59,19 @@ chr2 <- import_chrom(bed = 'RFanno_HindIII.bed', raflist = list('chr2.raf'), wor
 
 ```
 
-The resulting `InteractionSet` object is included in the package and can be loaded using:
+## Using toy example data files 
+
+This package also includes very small "toy" example files, a genome annotation file (exRFanno.bed), and several restriction fragment pair files (*.raf). Load the example:
+```{r, eval=T}
+
+toyIset_imported <- import_chrom(bed = 'exRFanno.bed', raflist = list('exRFpairs.raf'), workDir = file.path(system.file("inst/extdata", package = "chromium")))
+
+```
+
+## Inspecting the InteractionSet object
+
+But back to the chromosome 2 data: 
+The resulting `InteractionSet` object is also included in the package and can be directly loaded using:
 ```{r, eval=T}
 data(chr2) 
 ```
@@ -73,32 +85,38 @@ And the interactions are a GInteractions object:
 ```{r, eval=T}
 interactions(chr2)
 ```
+We can see here that the data actually contains not only intrachromosomal interactions from chromosome 2, but also interactions between chromosome 2 and other chromosomes. In the Subsetting section we will see how to limit both the interactions as well as the annotation to chromosome 2 only.
 
 The metadata of this `InteractionSet` are empty so far:
 ```{r, eval=T}
 metadata(chr2)
 ```
 
+
 ## Subsetting the InteractionSet
 If you choose to use only certain chromosomes or regions for your analysis, we provide a possibility to easily subset your data. The ´from´ and ´to´ parameters signify the genomic positions of the start and end of your subset, and they are optional. Subsetting will work in the same way for binned data, without the need to change the `to` and ´from´ values.
 
 ```{r, eval=FALSE}
-chr2_subset <- subset_chrom(chr2, chr=2, from=1, to=100000000)
+chr2_subset <- subset_chrom(chr2, chr=2)
+
+print(object.size(chr2), units='auto') # the full data for chr2 and the annotation for all chromosomes
+print(object.size(chr2[1:1]), units='auto') # just one interaction, but the complete annotation for all chromosomes
+print(object.size(chr2_subset), units='auto') # chr2 with one million interactions, and only the corresponding annotations.
 ```
 
-The resulting ´InteractionSet´ object contains only those interactions within the genomic region, and only the genomic annotation for the selected region. This reduces the object size in comparison to the standard method of subsetting included in the  ´InteractionSet´ package.
+The resulting ´InteractionSet´ object contains only those interactions within the selected genomic region, and only the genomic annotation for this region (for chr2 in this case). This significantly reduces the object size in comparison to the standard method of subsetting included in the  ´InteractionSet´ package.
 
 # Binning
 
 Having imported the chromatin conformation data, the next step consists in the choice of the binning approach. Ideally, data would be analyzed at its technical resolution i.e. the restriction fragment resolution. However, this is difficult to obtain and usually data are binned into bins containing several fragments to increase the signal to noise ratio.    
 
-The binning is performed using `bin` function. It requires two arguments, the `InteractionSet` object along with the preferred bin size. The bin size can be set to any size larger than the restriction fragment size. A larger bin size will result in lower matrix resolution but faster calculations.
+The binning is performed using `bin_chrom` function. It requires two arguments, the `InteractionSet` object along with the preferred bin size. The bin size can be set to any size larger than the restriction fragment size. A larger bin size will result in lower matrix resolution but faster calculations.
 
 Let's bin our chromosome 2 contact matrix into 10kb bins:
 
 ```{r, eval=FALSE}
 
-chr2_binned = bin_chrom(chr2, binSize = 10000)
+chr2_binned = bin_chrom(chr2, binSize = 100000)
 
 ```
 
