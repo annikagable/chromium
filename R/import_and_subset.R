@@ -96,6 +96,8 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
   return(list(RFanno = RFanno, RFpairs = RFpairs))
 }
 
+
+
 #' Choose a chromosome and a region within which InteractionSet interactions and regions should be retained.
 #'
 #' Only those interactions and regions of an InteractionSet which lie within the specified range will be retained.
@@ -115,9 +117,14 @@ read_bed_raf = function(bed, raflist = NULL, workDir = getwd()){
 #'
 subset_chrom <- function(Iset, chr, from = NULL, to = NULL){
   if(is.null(S4Vectors::metadata(Iset)$binSize)) binned = FALSE else binned = TRUE
+
+  # subset the interactions and regions by converting into a ligation frequency matrix
   subLFM <- Iset_region_to_LFM(Iset, chr, from, to)
+
+  # convert back into InteractionSet
   subIset <- LFM_to_Iset(subLFM, binned)
   S4Vectors::metadata(subIset)$binSize <- S4Vectors::metadata(Iset)$binSize
+
   return(subIset)
 }
 

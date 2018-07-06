@@ -12,7 +12,7 @@ id=
 #   "hg19"
    "hg38"
 
-gtf = import(file.path(dataDirectory, gtfFile))
+gtf = rtracklayer::import(file.path(dataDirectory, gtfFile))
 seqlevelsStyle(gtf)='ucsc'
 geneModels = data.frame(chromosome=as.character(chrom(gtf)),
                         start=as.numeric(start(gtf)),
